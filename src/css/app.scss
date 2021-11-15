@@ -1,0 +1,39 @@
+// app global css in SCSS form
+.body--light {
+  background: #fbfbfb;
+  color: #111;
+}
+
+.global-background {
+  background: #fbfbfb;
+  color: #111;
+}
+
+.logo {
+  font-family: 다음체;
+  font-weight: bold;
+}
+
+.gradient-teal {
+  background: rgb(0, 241, 255);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 241, 255, 1) 0%,
+    rgba(18, 255, 0, 1) 100%
+  );
+}
+
+.gradient-red {
+  background: linear-gradient(
+      127deg,
+      rgba(200, 0, 0, 0.8),
+      rgba(255, 0, 0, 0) 60.71%
+    ),
+    linear-gradient(227deg, rgba(0, 100, 0, 0.5), rgba(0, 255, 0, 0) 90.71%),
+    linear-gradient(336deg, rgba(0, 0, 100, 0.9), rgba(0, 0, 255, 0) 99%);
+}
+
+.name {
+  font-family: 나눔고딕;
+  font-weight: bold;
+}
