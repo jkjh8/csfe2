@@ -4,7 +4,7 @@
       방송
 
       <q-menu class="bg-black" style="border-radius: 2rem" :offset="[130, 5]">
-        <div class="q-pa-md">
+        <div class="q-pa-sm">
           <router-link class="link" to="">방송상태</router-link>
           <router-link class="link" to="">실시간방송</router-link>
           <router-link class="link" to="">예약방송</router-link>
@@ -16,7 +16,7 @@
       방송구간
 
       <q-menu class="bg-black" style="border-radius: 2rem" :offset="[100, 5]">
-        <div class="q-pa-md">
+        <div class="q-pa-sm">
           <router-link class="link" to="">방송구간설정</router-link>
           <router-link class="link" to="">방송장비설정</router-link>
         </div>
@@ -27,8 +27,8 @@
       서버관리
 
       <q-menu class="bg-black" style="border-radius: 2rem" :offset="[70, 5]">
-        <div class="q-pa-md">
-          <router-link class="link" to="">파일관리</router-link>
+        <div class="q-pa-sm">
+          <router-link class="link" to="/files">파일관리</router-link>
           <router-link class="link" to="">이벤트로그</router-link>
         </div>
       </q-menu>
@@ -38,9 +38,9 @@
       관리자
 
       <q-menu class="bg-black" style="border-radius: 2rem" :offset="[130, 5]">
-        <div class="q-pa-md">
+        <div class="q-pa-sm">
           <router-link class="link" to="">서버관리</router-link>
-          <router-link class="link" to="">사용자관리</router-link>
+          <router-link class="link" to="/admin/users">사용자관리</router-link>
           <router-link class="link" to="">파일관리</router-link>
         </div>
       </q-menu>
@@ -49,8 +49,8 @@
 </template>
 
 <script>
-import { computed } from "vue"
-import { useStore } from "vuex"
+import { computed } from 'vue'
+import { useStore } from 'vuex'
 
 export default {
   setup() {
@@ -84,8 +84,8 @@ button:hover {
   text-decoration: none;
   font-family: 나눔고딕;
   font-weight: 400;
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  padding: 0.2rem 1rem;
   color: #fbfbfb;
 }
 </style>

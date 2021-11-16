@@ -138,7 +138,7 @@ export default {
         $q.dialog({
           component: deleteUser,
           componentProps: {
-            item: user.value
+            user: user.value
           }
         }).onOk(async () => {
           await api.get(`/api/users/delete?id=${user.value._id}`)

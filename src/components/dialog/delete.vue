@@ -17,6 +17,12 @@
 
       <q-card-section>
         <div class="q-mx-md q-mt-lg">
+          <div v-if="user">
+            <div v-if="user.email">
+              사용자: <strong>{{ user.email }}</strong>
+            </div>
+            <div>해당 사용자를 삭제합니다.</div>
+          </div>
           <div v-if="item">
             <div>다음 내용을 삭제 하시겠습니까?</div>
             <br />
@@ -124,14 +130,11 @@ export default {
   props: {
     item: Object,
     message: String,
-    file: Object
+    file: Object,
+    user: Object
   },
 
-  emits: [
-    // REQUIRED; need to specify some events that your
-    // component will emit through useDialogPluginComponent()
-    ...useDialogPluginComponent.emits
-  ],
+  emits: [...useDialogPluginComponent.emits],
 
   setup(props) {
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =

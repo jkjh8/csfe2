@@ -2,7 +2,9 @@
   <q-layout view="lHh Lpr lFf">
     <q-header class="global-background">
       <div class="row items-center q-pa-md">
-        <router-link class="col-3 logo link" to="/">Media Server</router-link>
+        <router-link class="col-3 logo link text-black" to="/"
+          >Media Server</router-link
+        >
         <div class="col-7">
           <Links />
         </div>

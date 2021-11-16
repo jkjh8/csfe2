@@ -26,6 +26,22 @@ const routes = [
     ]
   },
 
+  {
+    path: '/files',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('src/pages/files/files.vue') }
+    ]
+  },
+
+  {
+    path: '/admin/users',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('src/pages/admin/users.vue') }
+    ]
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {
