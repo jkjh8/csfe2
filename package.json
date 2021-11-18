@@ -2,7 +2,7 @@
   "name": "mediaserver",
   "version": "0.0.1",
   "description": "mediaserver frontend",
-  "productName": "mediaserver",
+  "productName": "MediaServer",
   "author": "'jkjh8' <'jkjh82@naver.com'>",
   "private": true,
   "scripts": {

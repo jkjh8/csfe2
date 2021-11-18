@@ -2,11 +2,11 @@
   <q-dialog ref="dialogRef" @hide="onDialogHide">
     <q-card class="q-dialog-plugin">
       <q-card-section class="bg-grey-1">
-        <div class="row items-center q-gutter-md">
+        <div class="row items-center q-gutter-sm">
           <q-avatar size="md">
             <q-icon
-              name="svguse:icons.svg#folder"
-              color="green"
+              name="svguse:icons.svg#folder-fill"
+              color="yellow"
               size="1.5rem"
             />
           </q-avatar>
@@ -14,9 +14,14 @@
         </div>
       </q-card-section>
 
-      <q-card-section>
-        <div>{{ error }}</div> </q-card-section
-      >?
+      <q-card-section v-if="error" class="q-px-lg">
+        <div
+          class="text-white text-center bg-red q-py-sm"
+          style="border-radius: 1rem"
+        >
+          {{ error }}
+        </div>
+      </q-card-section>
 
       <q-card-section>
         <div class="q-mx-md q-mt-lg">
@@ -45,7 +50,7 @@
 <script>
 import { ref } from 'vue'
 import { api } from '@/boot/axios'
-import { useDialogPluginComponent } from 'quasar'
+import { useDialogPluginComponent, useQuasar } from 'quasar'
 
 export default {
   props: {
@@ -57,18 +62,23 @@ export default {
   setup(props) {
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
       useDialogPluginComponent()
+    const $q = useQuasar()
+
     const error = ref('')
     const name = ref('')
 
     async function onOKClick() {
+      $q.loading.show()
       try {
         const r = await api.post('/api/files/createFolder', {
           folder: props.folders,
           name: name.value
         })
         console.log(r)
-        onDialogOK({ value: name.value })
+        $q.loading.hide()
+        onDialogOK()
       } catch (err) {
+        $q.loading.hide()
         error.value = err.response.data.message
       }
     }

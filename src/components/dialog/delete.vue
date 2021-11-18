@@ -7,8 +7,8 @@
         ... use q-card-section for it?
       -->
       <q-card-section class="bg-grey-1">
-        <div class="row items-center q-gutter-md">
-          <q-avatar color="red-1" text-color="red" size="md">
+        <div class="row items-center q-gutter-sm">
+          <q-avatar text-color="red" size="md">
             <q-icon name="svguse:icons.svg#trash" color="red" size="1.5rem" />
           </q-avatar>
           <div style="font-size: 1.2rem">삭제</div>

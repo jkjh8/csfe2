@@ -12,7 +12,7 @@
           </div>
           <div class="name q-ml-sm" style="font-size: 1.2rem">Folder</div>
         </div>
-        <div class="q-ml-md row items-center q-gutter-sm">
+        <div class="q-ml-md row items-center q-gutter-xs">
           <span>/</span>
           <q-breadcrumbs class="q-mr-md" gutter="xs" active-color="white">
             <q-breadcrumbs-el
@@ -24,9 +24,42 @@
             />
           </q-breadcrumbs>
 
-          <div>
-            <q-btn flat round size="sm" @click="fnCreateFolder">
-              <q-icon name="svguse:icons.svg#plus-circle-fill" />
+          <q-separator
+            vertical
+            class="q-mx-md"
+            style="width: 2px"
+            color="grey"
+          />
+
+          <div class="row items-center">
+            <q-btn
+              flat
+              round
+              size=".7rem"
+              icon="svguse:icons.svg#folder-fill"
+              @click="fnCreateFolder"
+            >
+              <q-tooltip
+                anchor="top middle"
+                self="bottom middle"
+                :offset="[10, 10]"
+                >폴더생성</q-tooltip
+              >
+            </q-btn>
+            <q-btn
+              class="q-mx-sm"
+              flat
+              round
+              size=".6rem"
+              icon="svguse:icons.svg#arrow-up"
+              @click="fnFileUpload"
+            >
+              <q-tooltip
+                anchor="top middle"
+                self="bottom middle"
+                :offset="[10, 10]"
+                >파일업로드</q-tooltip
+              >
             </q-btn>
           </div>
         </div>
@@ -111,6 +144,7 @@
                     icon="svguse:icons.svg#trash-fill"
                     size="sm"
                     color="red"
+                    @click.prevent.stop="fnDelete(props.row)"
                   />
                 </div>
               </q-td>
@@ -128,6 +162,7 @@ import { useQuasar, format } from 'quasar'
 import { api } from '@/boot/axios'
 import fileIcons from '@/api/fileIcons'
 
+import Delete from '@/components/dialog/delete'
 import addFolder from '@/components/dialog/files/addFolder'
 
 export default {
@@ -148,8 +183,8 @@ export default {
       await fnUpdateFolder()
     }
 
-    async function fnClickFolder(row) {
-      folders.value.push(row.name)
+    async function fnClickFolder(item) {
+      folders.value.push(item.name)
       await fnUpdateFolder()
     }
 
@@ -157,6 +192,26 @@ export default {
       $q.dialog({
         component: addFolder,
         componentProps: { folders: folders.value }
+      }).onOk(async () => {
+        await fnUpdateFolder()
+      })
+    }
+
+    function fnFileUpload() {
+      $q.dialog({
+        component: addFolder,
+        componentProps: { folders: folders.value }
+      }).onOk(async () => {
+        await fnUpdateFolder()
+      })
+    }
+
+    function fnDelete(item) {
+      $q.dialog({
+        component: Delete,
+        componentProps: { file: item }
+      }).onOk(async (rt) => {
+        await api.post('/api/files/delete', rt)
       })
     }
 
@@ -179,6 +234,8 @@ export default {
       fnMoveFolder,
       fnClickFolder,
       fnCreateFolder,
+      fnFileUpload,
+      fnDelete,
       folders,
       files,
       humanStorageSize
