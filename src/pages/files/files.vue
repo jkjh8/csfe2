@@ -1,5 +1,5 @@
 <template>
-  <div style="margin: 10% 10% 0 10%">
+  <div style="margin: 5% 10% 0 10%">
     <div class="row justify-start items-end q-gutter-sm">
       <q-icon name="svguse:icons.svg#card-fill" size="sm" />
       <span class="name" style="font-size: 1.4rem">파일관리</span>

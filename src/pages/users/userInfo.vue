@@ -1,6 +1,6 @@
 <template>
   <div class="row items-center">
-    <div style="margin: 20% auto">
+    <div style="margin: 5% auto">
       <UserInfo />
       <div style="text-align: center; margin-top: 4rem">
         <router-link to="/">홈으로</router-link>

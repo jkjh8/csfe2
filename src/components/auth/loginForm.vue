@@ -74,7 +74,7 @@ import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
 import { api } from '@/boot/axios'
-import vuecookie from 'vue-cookies'
+import vuecookie from 'vue-cookie'
 
 export default {
   setup() {
@@ -100,17 +100,18 @@ export default {
         localStorage.setItem('email', userInfo.value.email)
       } else {
         localStorage.renmovedItem('email')
+        localStorage.renmovedItem('refresh')
       }
 
       try {
         const r = await api.post('/api/auth/login', userInfo.value)
         commit('user/updateUser', r.data.user)
-        commit('user/updateToken', r.data.token.access)
-
+        vuecookie.set('token', r.data.token.access)
         $q.loading.hide()
-        console.log(r.data)
-        // console.log(r)
-        // router.push('/')
+        if (r.data.token.refresh) {
+          localStorage.setItem('refresh', r.data.token.refresh)
+        }
+        router.push('/')
       } catch (err) {
         if (err.response.data && err.response.data.message) {
           error.value = err.response.data.message

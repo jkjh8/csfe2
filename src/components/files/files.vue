@@ -164,6 +164,7 @@ import fileIcons from '@/api/fileIcons'
 
 import Delete from '@/components/dialog/delete'
 import addFolder from '@/components/dialog/files/addFolder'
+import addFile from '@/components/dialog/files/addFile'
 
 export default {
   setup() {
@@ -199,10 +200,30 @@ export default {
 
     function fnFileUpload() {
       $q.dialog({
-        component: addFolder,
-        componentProps: { folders: folders.value }
-      }).onOk(async () => {
-        await fnUpdateFolder()
+        component: addFile
+      }).onOk(async (file) => {
+        if (!file) return
+        $q.loading.show()
+        try {
+          let formData = new FormData()
+          formData.append('file', file)
+          formData.set('folder', folders.value.join('/'))
+          const r = await api.post('/api/files/upload', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            },
+            onUploadProgress: (progress) => {
+              console.log(
+                parseInt(Math.round((progress.loaded / progress.total) * 100))
+              )
+            }
+          })
+          console.log(r)
+          await fnUpdateFolder()
+        } catch (err) {
+          console.error(err)
+        }
+        $q.loading.hide()
       })
     }
 
@@ -212,6 +233,7 @@ export default {
         componentProps: { file: item }
       }).onOk(async (rt) => {
         await api.post('/api/files/delete', rt)
+        await fnUpdateFolder()
       })
     }
 

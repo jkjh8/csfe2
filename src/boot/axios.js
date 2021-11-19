@@ -1,7 +1,6 @@
 import { boot } from 'quasar/wrappers'
 import axios from 'axios'
-
-// const { state } = useStore()
+import vuecookie from 'vue-cookie'
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -21,12 +20,58 @@ export default boot(({ app, router, store }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
   api.interceptors.request.use(
     function (config) {
-      config.headers.Authorization = `Bearer ${store.state.user.token}`
-      console.log(config)
+      if (!config.headers.Authorization) {
+        const token = vuecookie.get('token')
+        config.headers.Authorization = `Bearer ${token}`
+      }
       return config
     },
     function (error) {
       return Promise.reject(error)
+    }
+  )
+  api.interceptors.response.use(
+    function (response) {
+      return response
+    },
+    async function (error) {
+      try {
+        const original = error.config
+        const token = localStorage.getItem('refresh')
+        if (error.response.status === 401) {
+          if (original.url === 'api/auth/refresh') {
+            try {
+              vuecookie.delete('token')
+              localStorage.removeItem('refresh')
+            } catch (e) {
+              console.error('response error', e)
+            }
+            return Promise.reject(error)
+          }
+          if (!original._retry && token) {
+            original._retry = true
+            return api
+              .get('/api/auth/refresh', {
+                headers: {
+                  Authorization: `Bearer ${token}`
+                }
+              })
+              .then((res) => {
+                console.log(res)
+                if (res.status === 200) {
+                  if (res.data.token) {
+                    vuecookie.set('token', res.data.token.access)
+                    localStorage.setItem('refresh', res.data.token.refresh)
+                  }
+                  return api(original)
+                }
+              })
+          }
+          return Promise.reject(error)
+        }
+      } catch (e) {
+        return Promise.reject(e)
+      }
     }
   )
 

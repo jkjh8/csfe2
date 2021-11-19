@@ -81,6 +81,7 @@ import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { api } from '@/boot/axios'
+import vuecookie from 'vue-cookie'
 import pickColor from '@/api/pickColor'
 
 export default {
@@ -106,7 +107,10 @@ export default {
 
     async function logout() {
       await api.get('api/auth/logout')
+      vuecookie.delete('token')
+      localStorage.removeItem('refresh')
       commit('user/updateUser', null)
+
       router.push('/')
     }
 

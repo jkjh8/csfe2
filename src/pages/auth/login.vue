@@ -1,6 +1,6 @@
 <template>
   <div class="row items-center">
-    <div style="margin: 20% auto">
+    <div style="margin: 10% auto">
       <Login />
       <div style="text-align: center; margin-top: 4rem">
         <router-link to="/register">회원가입</router-link>
