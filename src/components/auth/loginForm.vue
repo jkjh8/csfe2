@@ -74,6 +74,7 @@ import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
 import { api } from '@/boot/axios'
+import vuecookie from 'vue-cookies'
 
 export default {
   setup() {
@@ -104,9 +105,12 @@ export default {
       try {
         const r = await api.post('/api/auth/login', userInfo.value)
         commit('user/updateUser', r.data.user)
+        commit('user/updateToken', r.data.token.access)
+
         $q.loading.hide()
+        console.log(r.data)
         // console.log(r)
-        router.push('/')
+        // router.push('/')
       } catch (err) {
         if (err.response.data && err.response.data.message) {
           error.value = err.response.data.message

@@ -5,8 +5,10 @@ import { createStore } from 'vuex'
 import user from './user'
 import users from './users'
 
+let Store
+
 export default store(function (/* { ssrContext } */) {
-  const Store = createStore({
+  Store = createStore({
     modules: {
       user,
       users
