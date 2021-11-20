@@ -1,20 +1,20 @@
 <template>
-  <q-page class="flex flex-center">
-    <img
-      alt="Quasar logo"
-      src="~assets/quasar-logo-vertical.svg"
-      style="width: 200px; height: 200px"
-    />
+  <q-page>
+    <div class="row justify-center" style="margin: 10% auto">
+      <NeedLogin />
+    </div>
   </q-page>
 </template>
 
 <script>
 import { defineComponent, onMounted } from 'vue'
 import { useStore } from 'vuex'
+import NeedLogin from '@/components/widgets/needLogin'
 import { api } from '@/boot/axios'
 
 export default defineComponent({
   name: 'PageIndex',
+  components: { NeedLogin },
   setup() {
     const { dispatch } = useStore()
     onMounted(async () => {

@@ -40,12 +40,61 @@
         </q-tr>
       </template>
 
-      <template #body-cell-timestamp="props">
-        <q-td :props="props">
-          <div>
-            {{ fnDateFormat(props.value) }}
-          </div>
-        </q-td>
+      <template #body="props">
+        <q-tr
+          :props="props"
+          :class="props.row.level === 'error' ? 'text-red' : ''"
+        >
+          <q-td key="timestamp" :props="props">
+            <div>
+              {{ fnDateFormat(props.value) }}
+            </div>
+          </q-td>
+
+          <q-td key="level" :props="props">
+            <div
+              v-if="props.row.level === 'info'"
+              class="text-primary"
+            >
+              {{
+                props.row.level.charAt(0).toUpperCase() +
+                props.row.level.slice(1)
+              }}
+            </div>
+
+            <div
+              v-else-if="props.row.level === 'warning'"
+              class="text-yellow"
+            >
+              {{
+                props.row.level.charAt(0).toUpperCase() +
+                props.row.level.slice(1)
+              }}
+            </div>
+
+            <div v-else class="text-red">
+              {{
+                props.row.level.charAt(0).toUpperCase() +
+                props.row.level.slice(1)
+              }}
+            </div>
+          </q-td>
+
+          <q-td key="message" :props="props">
+            <div>
+              {{ props.row.message }}
+            </div>
+            <q-tooltip
+              :delay="1000"
+              anchor="center right"
+              :offset="[-30, 10]"
+              max-width="16rem"
+              style="background: rgba(100, 100, 50, 0.8)"
+            >
+              {{ props.row.message }}
+            </q-tooltip>
+          </q-td>
+        </q-tr>
       </template>
     </q-table>
   </div>

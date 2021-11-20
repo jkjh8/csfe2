@@ -10,15 +10,18 @@ import vuecookie from 'vue-cookie'
 // for each client)
 let api
 if (process.env.DEV) {
-  api = axios.create({ baseURL: `http://${window.location.hostname}:3000` })
+  api = axios.create({
+    baseURL: `http://${window.location.hostname}:3000`
+  })
 } else {
-  api = axios.create({ baseURL: `http://${window.location.hostname}` })
+  api = axios.create({
+    baseURL: `http://${window.location.hostname}`
+  })
 }
 api.defaults.withCredentials = true
 
 export default boot(({ app, router, store }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
-
   function deleteToken() {
     vuecookie.delete('token')
     localStorage.removeItem('refresh')

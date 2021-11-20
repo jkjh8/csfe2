@@ -12,10 +12,10 @@
           field: 'createdAt'
         },
         {
-          name: 'category',
+          name: 'priority',
           align: 'center',
           label: '중요도',
-          field: 'category'
+          field: 'priority'
         },
         {
           name: 'zones',
@@ -46,12 +46,67 @@
         </q-tr>
       </template>
 
-      <template #body-cell-createdAt="props">
-        <q-td :props="props">
-          <div>
-            {{ fnDateFormat(props.value) }}
-          </div>
-        </q-td>
+      <template #body="props">
+        <q-tr
+          :props="props"
+          :class="props.row.priority === 'error' ? 'text-red' : ''"
+        >
+          <q-td key="createdAt" :props="props">
+            <div>
+              {{ fnDateFormat(props.row.createdAt) }}
+            </div>
+          </q-td>
+
+          <q-td key="priority" :props="props">
+            <div
+              v-if="props.row.priority === 'info'"
+              class="text-primary"
+            >
+              {{
+                props.row.priority.charAt(0).toUpperCase() +
+                props.row.priority.slice(1)
+              }}
+            </div>
+
+            <div
+              v-else-if="props.row.priority === 'warning'"
+              class="text-yellow"
+            >
+              {{
+                props.row.priority.charAt(0).toUpperCase() +
+                props.row.priority.slice(1)
+              }}
+            </div>
+
+            <div v-else class="text-red">
+              {{
+                props.row.priority.charAt(0).toUpperCase() +
+                props.row.priority.slice(1)
+              }}
+            </div>
+          </q-td>
+
+          <q-td key="zones" :props="props">
+            <div>
+              {{ props.row.zones.join(',') }}
+            </div>
+          </q-td>
+
+          <q-td key="message" :props="props">
+            <div class="hiddenText">
+              {{ props.row.message }}
+            </div>
+            <q-tooltip
+              :delay="1000"
+              anchor="center right"
+              :offset="[-30, 10]"
+              max-width="16rem"
+              style="background: rgba(100, 100, 50, 0.8)"
+            >
+              {{ props.row.message }}
+            </q-tooltip>
+          </q-td>
+        </q-tr>
       </template>
     </q-table>
   </div>
@@ -153,5 +208,13 @@ export default {
   position: absolute;
   right: 10%;
   margin-top: 0.7rem;
+}
+.hiddenText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1rem;
+  max-height: 2rem;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 </style>

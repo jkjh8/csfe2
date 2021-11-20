@@ -1,7 +1,10 @@
 <template>
-  <q-card class="shadow-10" style="width: 25rem">
+  <q-card class="shadow-15" style="width: 25rem; border-radius: 1rem">
     <q-card-section class="pa-none gradient-red">
-      <div class="q-px-md q-py-xs text-grey-2 name" style="font-size: 1.2rem">
+      <div
+        class="q-px-md q-py-xs text-grey-2 name"
+        style="font-size: 1.2rem"
+      >
         <span>
           <q-icon name="svguse:icons.svg#user"></q-icon>
         </span>
@@ -29,7 +32,9 @@
           <q-item>
             <q-item-section>
               <q-item-label>로그인횟수</q-item-label>
-              <q-item-label caption>{{ user.numberOfLogin }}</q-item-label>
+              <q-item-label caption>{{
+                user.numberOfLogin
+              }}</q-item-label>
             </q-item-section>
           </q-item>
 
@@ -53,7 +58,10 @@
 
           <q-item>
             <q-item-section avatar>
-              <q-avatar :style="`background: ${user.color}`" size="md" />
+              <q-avatar
+                :style="`background: ${user.color}`"
+                size="md"
+              />
             </q-item-section>
             <q-item-section>
               <q-item-label>사용자색상</q-item-label>
@@ -72,6 +80,20 @@
 
           <q-item>
             <q-item-section>
+              <q-item-label>비밀번호 변경</q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              <q-btn
+                round
+                flat
+                icon="svguse:icons.svg#arrow-circle-right"
+                color="purple"
+              />
+            </q-item-section>
+          </q-item>
+
+          <q-item>
+            <q-item-section>
               <q-item-label>회원탈퇴</q-item-label>
             </q-item-section>
             <q-item-section side>
@@ -79,6 +101,7 @@
                 round
                 flat
                 icon="svguse:icons.svg#arrow-circle-right"
+                color="red-10"
                 @click="fnDeleteUser"
               />
             </q-item-section>

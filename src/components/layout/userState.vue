@@ -10,7 +10,7 @@
       <q-menu
         class="shadow-15"
         style="width: 18rem; border-radius: 1rem"
-        :offset="[50, 10]"
+        :offset="[20, 10]"
       >
         <q-list class="column justify-center items-center q-pa-md">
           <q-item>

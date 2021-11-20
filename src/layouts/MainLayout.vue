@@ -1,14 +1,14 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header class="global-background">
-      <div class="row items-center q-pa-md">
-        <router-link class="col-3 logo link text-black" to="/"
+      <div class="row items-center q-pa-md relative-position">
+        <router-link class="logo link text-black" to="/"
           >Media Server</router-link
         >
-        <div class="col-7">
+        <div class="absolute-center">
           <Links />
         </div>
-        <div class="col-2 row justify-center">
+        <div class="absolute-right q-mt-md q-mr-xl">
           <UserState />
         </div>
       </div>
