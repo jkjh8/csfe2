@@ -1,7 +1,7 @@
 <template>
   <q-card class="shadow-10" style="border-radius: 0.8rem">
     <q-card-section class="q-pa-none gradient-red">
-      <div class="q-pa-md row justify-between items-center text-white">
+      <div class="q-px-md q-py-sm row justify-between items-center text-white">
         <div class="q-gutter-sm row items-center">
           <div>
             <q-icon
@@ -100,7 +100,7 @@
             <q-tr
               :props="props"
               :class="props.row.type === 'directory' ? 'directory' : ''"
-              @click="fnClickFolder(props.row)"
+              @click="fnClickItem(props.row)"
             >
               <q-td :props="props" key="type">
                 <div>
@@ -184,9 +184,11 @@ export default {
       await fnUpdateFolder()
     }
 
-    async function fnClickFolder(item) {
-      folders.value.push(item.name)
-      await fnUpdateFolder()
+    async function fnClickItem(item) {
+      if (item.type === 'directory') {
+        folders.value.push(item.name)
+        await fnUpdateFolder()
+      }
     }
 
     function fnCreateFolder() {
@@ -254,7 +256,7 @@ export default {
       fileIcons,
       user,
       fnMoveFolder,
-      fnClickFolder,
+      fnClickItem,
       fnCreateFolder,
       fnFileUpload,
       fnDelete,

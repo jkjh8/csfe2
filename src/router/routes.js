@@ -2,27 +2,38 @@ const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/Index.vue') }]
+    children: [
+      { path: '', component: () => import('pages/Index.vue') }
+    ]
   },
   {
     path: '/login',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('src/pages/auth/login.vue') }
+      {
+        path: '',
+        component: () => import('src/pages/auth/login.vue')
+      }
     ]
   },
   {
     path: '/register',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('src/pages/auth/register.vue') }
+      {
+        path: '',
+        component: () => import('src/pages/auth/register.vue')
+      }
     ]
   },
   {
     path: '/user',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('src/pages/users/userInfo.vue') }
+      {
+        path: '',
+        component: () => import('src/pages/users/userInfo.vue')
+      }
     ]
   },
 
@@ -30,7 +41,21 @@ const routes = [
     path: '/files',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('src/pages/files/files.vue') }
+      {
+        path: '',
+        component: () => import('src/pages/files/files.vue')
+      }
+    ]
+  },
+
+  {
+    path: '/eventlog',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('src/pages/eventlog/eventlog.vue')
+      }
     ]
   },
 
@@ -38,7 +63,20 @@ const routes = [
     path: '/admin/users',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('src/pages/admin/users.vue') }
+      {
+        path: '',
+        component: () => import('src/pages/admin/users.vue')
+      }
+    ]
+  },
+  {
+    path: '/admin/systemlog',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('src/pages/admin/systemlog.vue')
+      }
     ]
   },
 

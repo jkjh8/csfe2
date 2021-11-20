@@ -13,7 +13,7 @@
       <q-card-section>
         <div class="q-mx-md q-mt-lg">
           <div class="q-mt-md">
-            <q-file dense filled v-model="file" label="파일선택" />
+            <q-file color="cyan" dense filled v-model="file" label="파일선택" />
           </div>
         </div>
       </q-card-section>

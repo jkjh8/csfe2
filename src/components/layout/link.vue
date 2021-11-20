@@ -3,7 +3,11 @@
     <button>
       방송
 
-      <q-menu class="bg-black" style="border-radius: 2rem" :offset="[130, 5]">
+      <q-menu
+        class="bg-black"
+        style="border-radius: 2rem"
+        :offset="[130, 5]"
+      >
         <div class="q-pa-sm">
           <router-link class="link" to="">방송상태</router-link>
           <router-link class="link" to="">실시간방송</router-link>
@@ -15,7 +19,11 @@
     <button>
       방송구간
 
-      <q-menu class="bg-black" style="border-radius: 2rem" :offset="[100, 5]">
+      <q-menu
+        class="bg-black"
+        style="border-radius: 2rem"
+        :offset="[100, 5]"
+      >
         <div class="q-pa-sm">
           <router-link class="link" to="">방송구간설정</router-link>
           <router-link class="link" to="">방송장비설정</router-link>
@@ -26,10 +34,16 @@
     <button>
       서버관리
 
-      <q-menu class="bg-black" style="border-radius: 2rem" :offset="[70, 5]">
+      <q-menu
+        class="bg-black"
+        style="border-radius: 2rem"
+        :offset="[70, 5]"
+      >
         <div class="q-pa-sm">
           <router-link class="link" to="/files">파일관리</router-link>
-          <router-link class="link" to="">이벤트로그</router-link>
+          <router-link class="link" to="/eventlog"
+            >이벤트로그</router-link
+          >
         </div>
       </q-menu>
     </button>
@@ -37,11 +51,20 @@
     <button>
       관리자
 
-      <q-menu class="bg-black" style="border-radius: 2rem" :offset="[130, 5]">
+      <q-menu
+        class="bg-black"
+        style="border-radius: 2rem"
+        :offset="[130, 5]"
+      >
         <div class="q-pa-sm">
           <router-link class="link" to="">서버관리</router-link>
-          <router-link class="link" to="/admin/users">사용자관리</router-link>
+          <router-link class="link" to="/admin/users"
+            >사용자관리</router-link
+          >
           <router-link class="link" to="">파일관리</router-link>
+          <router-link class="link" to="/admin/systemlog"
+            >시스템로그</router-link
+          >
         </div>
       </q-menu>
     </button>

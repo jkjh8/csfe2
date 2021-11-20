@@ -4,6 +4,8 @@ import { createStore } from 'vuex'
 // import example from './module-example'
 import user from './user'
 import users from './users'
+import eventlog from './eventlog'
+import systemlog from './systemlog'
 
 let Store
 
@@ -11,7 +13,9 @@ export default store(function (/* { ssrContext } */) {
   Store = createStore({
     modules: {
       user,
-      users
+      users,
+      eventlog,
+      systemlog
     },
 
     // enable strict mode (adds overhead!)

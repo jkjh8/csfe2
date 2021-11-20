@@ -99,8 +99,11 @@ export default {
       if (saveEmail.value) {
         localStorage.setItem('email', userInfo.value.email)
       } else {
-        localStorage.renmovedItem('email')
-        localStorage.renmovedItem('refresh')
+        localStorage.removeItem('email')
+        localStorage.removeItem('refresh')
+      }
+      if (!userInfo.value.keepLoggedIn) {
+        localStorage.removeItem('refresh')
       }
 
       try {
@@ -122,9 +125,8 @@ export default {
 
     onMounted(() => {
       saveEmail.value = Boolean(localStorage.getItem('saveEmail'))
-      userInfo.value.keepLoggedIn = Boolean(
-        localStorage.getItem('keepLoggedIn')
-      )
+      userInfo.value.keepLoggedIn =
+        localStorage.getItem('keepLoggedIn') === 'true'
       if (saveEmail.value) {
         userInfo.value.email = localStorage.getItem('email')
       }

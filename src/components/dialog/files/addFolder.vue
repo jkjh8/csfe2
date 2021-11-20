@@ -26,7 +26,13 @@
       <q-card-section>
         <div class="q-mx-md q-mt-lg">
           <div class="q-mt-md">
-            <q-input v-model="name" dense filled label="폴더 이름" />
+            <q-input
+              v-model="name"
+              color="cyan"
+              dense
+              filled
+              label="폴더 이름"
+            />
           </div>
         </div>
       </q-card-section>

@@ -35,7 +35,25 @@
             filled
             :rules="rules.email"
             label="이메일"
-          />
+          >
+            <template v-slot:after>
+              <q-btn
+                flat
+                round
+                :color="checkedEmail ? 'green' : 'grey'"
+                icon="svguse:icons.svg#check-circle"
+                @click="fnCheckEmail"
+              >
+                <q-tooltip
+                  anchor="top middle"
+                  self="bottom middle"
+                  :offset="[10, 10]"
+                  style="background: rgba(1, 1, 1, 0.2)"
+                  >중복확인</q-tooltip
+                >
+              </q-btn>
+            </template>
+          </q-input>
 
           <q-input
             v-model="userInfo.password"
@@ -116,9 +134,9 @@ export default {
       password: '',
       checkPassword: ''
     })
+    const checkedEmail = ref(false)
     const showPassword = ref(false)
     const showCheckPassword = ref(false)
-    const saveEmail = ref(false)
     const textColor = computed(() => {
       return pickColor(userInfo.value.color)
     })
@@ -134,9 +152,26 @@ export default {
       })
     }
 
+    async function fnCheckEmail() {
+      if (!userInfo.value.email)
+        return (error.value = '이메일을 먼저 입력해주세요')
+      const r = await api.get(
+        `/api/auth/checkEmail?email=${userInfo.value.email}`
+      )
+      if (r.data.result) {
+        checkedEmail.value = true
+      } else {
+        checkedEmail.value = false
+        error.value = r.data.message
+      }
+    }
+
     async function onRegister() {
-      $q.loading.show()
       error.value = ''
+      if (!checkedEmail.value)
+        return (error.value = '이메일 중복 확인해 주세요')
+
+      $q.loading.show()
       try {
         const r = await api.post('/api/auth/register', userInfo.value)
         commit('user/updateUser', r.data.user)
@@ -168,10 +203,12 @@ export default {
         ]
       },
       error,
+      checkedEmail,
       textColor,
       userInfo,
       showPassword,
       showCheckPassword,
+      fnCheckEmail,
       fnSelectColor,
       onRegister
     }

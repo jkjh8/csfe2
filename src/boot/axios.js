@@ -18,6 +18,14 @@ api.defaults.withCredentials = true
 
 export default boot(({ app, router, store }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
+
+  function deleteToken() {
+    vuecookie.delete('token')
+    localStorage.removeItem('refresh')
+    router.push('/')
+    store.commit('user/updateUser', null)
+  }
+
   api.interceptors.request.use(
     function (config) {
       if (!config.headers.Authorization) {
@@ -37,31 +45,30 @@ export default boot(({ app, router, store }) => {
     async function (error) {
       try {
         const original = error.config
-        const token = localStorage.getItem('refresh')
+        const refreshtoken = localStorage.getItem('refresh')
         if (error.response.status === 401) {
           if (original.url === 'api/auth/refresh') {
-            try {
-              vuecookie.delete('token')
-              localStorage.removeItem('refresh')
-            } catch (e) {
-              console.error('response error', e)
-            }
+            deleteToken()
             return Promise.reject(error)
           }
-          if (!original._retry && token) {
+          if (!original._retry && refreshtoken) {
             original._retry = true
             return api
               .get('/api/auth/refresh', {
                 headers: {
-                  Authorization: `Bearer ${token}`
+                  Authorization: `Bearer ${refreshtoken}`
                 }
               })
               .then((res) => {
-                console.log(res)
+                let tokens
                 if (res.status === 200) {
                   if (res.data.token) {
-                    vuecookie.set('token', res.data.token.access)
-                    localStorage.setItem('refresh', res.data.token.refresh)
+                    tokens = res.data.token
+                    vuecookie.set('token', tokens.access)
+                    localStorage.setItem('refresh', tokens.refresh)
+                  }
+                  if (tokens && tokens.access) {
+                    original.headers.Authorization = `Bearer ${tokens.access}`
                   }
                   return api(original)
                 }
