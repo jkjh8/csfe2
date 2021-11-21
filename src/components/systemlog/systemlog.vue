@@ -34,7 +34,7 @@
             v-for="col in props.cols"
             :key="col.name"
             :props="props"
-            style="font-family: 나눔고딕; font-weight: bold"
+            style="font-family: 나눔고딕; font-weight: 700"
             >{{ col.label }}</q-th
           >
         </q-tr>
