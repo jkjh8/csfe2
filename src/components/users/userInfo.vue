@@ -88,6 +88,7 @@
                 flat
                 icon="svguse:icons.svg#arrow-circle-right"
                 color="purple"
+                @click="fnChangePassword"
               />
             </q-item-section>
           </q-item>
@@ -122,6 +123,7 @@ import { api } from '@/boot/axios'
 
 import colorPicker from '@/components/dialog/colorPicker'
 import deleteUser from '@/components/dialog/delete'
+import changePassword from '@/components/dialog/users/changePassword'
 
 export default {
   setup() {
@@ -156,7 +158,6 @@ export default {
     }
 
     async function fnDeleteUser() {
-      $q.loading.show()
       try {
         $q.dialog({
           component: deleteUser,
@@ -164,6 +165,7 @@ export default {
             user: user.value
           }
         }).onOk(async () => {
+          $q.loading.show()
           await api.get(`/api/users/delete?id=${user.value._id}`)
           $q.loading.hide()
           commit('user/updateUser', null)
@@ -175,11 +177,19 @@ export default {
       $q.loading.hide()
     }
 
+    function fnChangePassword() {
+      $q.dialog({
+        component: changePassword,
+        componentProps: { user: user.value }
+      })
+    }
+
     return {
       user,
       fnColorPicker,
       fnDateFormat,
-      fnDeleteUser
+      fnDeleteUser,
+      fnChangePassword
     }
   }
 }

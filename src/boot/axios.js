@@ -79,6 +79,7 @@ export default boot(({ app, router, store }) => {
           }
           return Promise.reject(error)
         }
+        return Promise.reject(error)
       } catch (e) {
         return Promise.reject(e)
       }

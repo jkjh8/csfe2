@@ -63,7 +63,7 @@
             </div>
 
             <div
-              v-else-if="props.row.level === 'warning'"
+              v-else-if="props.row.level === 'warn'"
               class="text-yellow"
             >
               {{

@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { onMounted } from 'vue'
+import { onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 
@@ -26,12 +26,20 @@ export default {
     const { dispatch } = useStore()
     const $q = useQuasar()
 
-    onMounted(async () => {
+    onBeforeMount(async () => {
       $q.loading.show()
       try {
         await dispatch('user/login')
       } catch (err) {
-        console.error(err)
+        $q.loading.hide()
+        $q.notify({
+          icon: 'svguse:icons.svg#exclamation',
+          message: '사용자 로그인이 필요합니다',
+          caption: '로그인 페이지로 이동해서 로그인후 이용하세요.',
+          color: 'red',
+          position: 'center'
+        })
+        router.push('/')
       }
       $q.loading.hide()
     })

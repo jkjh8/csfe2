@@ -138,7 +138,7 @@ export default {
     }
 
     onMounted(() => {
-      saveEmail.value = Boolean(localStorage.getItem('saveEmail'))
+      saveEmail.value = localStorage.getItem('saveEmail') === 'true'
       userInfo.value.keepLoggedIn =
         localStorage.getItem('keepLoggedIn') === 'true'
       if (saveEmail.value) {
