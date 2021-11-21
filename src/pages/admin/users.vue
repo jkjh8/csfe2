@@ -17,6 +17,7 @@
 import { computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import { useRouter } from 'vue-router'
 
 import Users from '@/components/users/users'
 
@@ -24,6 +25,7 @@ export default {
   components: { Users },
   setup() {
     const { getters, dispatch } = useStore()
+    const router = useRouter()
     const $q = useQuasar()
     const usersCount = computed(() => getters['users/usersCount'])
 
@@ -33,7 +35,15 @@ export default {
         await dispatch('user/login')
         await dispatch('users/updateUsers')
       } catch (err) {
-        console.error(err)
+        $q.loading.hide()
+        $q.notify({
+          icon: 'svguse:icons.svg#exclamation',
+          message: '사용자가 권한이 없습니다.',
+          caption: '접근을 하려면 관리자 권한이 필요합니다.',
+          color: 'red',
+          position: 'center'
+        })
+        router.push('/')
       }
       $q.loading.hide()
     })

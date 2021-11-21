@@ -100,7 +100,8 @@
               :delay="1000"
               anchor="center right"
               :offset="[-30, 10]"
-              max-width="16rem"
+              max-width="18rem"
+              max-height="16rem"
               style="background: rgba(100, 100, 50, 0.8)"
             >
               {{ props.row.message }}

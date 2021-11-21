@@ -1,4 +1,6 @@
 import { api } from '@/boot/axios'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 export async function login({ commit }) {
   try {
@@ -6,5 +8,6 @@ export async function login({ commit }) {
     commit('updateUser', r.data.user)
   } catch (err) {
     commit('updateUser', null)
+    router.push('/')
   }
 }

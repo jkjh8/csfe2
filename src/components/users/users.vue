@@ -1,8 +1,16 @@
 <template>
-  <div class="shadow-10" style="border-radius: 0.5rem; overflow: hidden">
+  <div
+    class="shadow-15"
+    style="border-radius: 0.5rem; overflow: hidden"
+  >
     <q-table
       :columns="[
-        { name: 'email', align: 'center', label: '이메일', field: 'email' },
+        {
+          name: 'email',
+          align: 'center',
+          label: '이메일',
+          field: 'email'
+        },
         {
           name: 'name',
           align: 'center',
@@ -15,8 +23,18 @@
           label: '사용자등급',
           field: 'userLevel'
         },
-        { name: 'admin', align: 'center', label: '관리자', field: 'admin' },
-        { name: 'auth', align: 'center', label: ' 지역권한', field: 'auth' },
+        {
+          name: 'admin',
+          align: 'center',
+          label: '관리자',
+          field: 'admin'
+        },
+        {
+          name: 'auth',
+          align: 'center',
+          label: ' 지역권한',
+          field: 'auth'
+        },
         {
           name: 'nomberOfLogin',
           align: 'center',
@@ -51,7 +69,7 @@
       :rows="users"
     >
       <template #header="props">
-        <q-tr :props="props" class="gradient-red text-white">
+        <q-tr :props="props" class="gradient-green text-grey-9">
           <q-th
             v-for="col in props.cols"
             :key="col.name"
@@ -192,7 +210,9 @@ export default {
           component: adminUser,
           componentProps: { user: user }
         }).onOk(async (rt) => {
-          await api.get(`/api/users/admin?id=${rt._id}&value=${!rt.admin}`)
+          await api.get(
+            `/api/users/admin?id=${rt._id}&value=${!rt.admin}`
+          )
           await dispatch('users/updateUsers')
         })
       } catch (err) {
@@ -206,7 +226,9 @@ export default {
           component: userLevel,
           componentProps: { user: user }
         }).onOk(async (rt) => {
-          await api.get(`/api/users/level?id=${user._id}&value=${rt.value}`)
+          await api.get(
+            `/api/users/level?id=${user._id}&value=${rt.value}`
+          )
           await dispatch('users/updateUsers')
         })
       } catch (err) {

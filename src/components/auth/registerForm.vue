@@ -1,6 +1,6 @@
 <template>
   <q-form @submit="onRegister">
-    <q-card class="shadow-10" style="width: 25rem">
+    <q-card class="shadow-15" style="width: 25rem">
       <q-card-section class="pa-none gradient-red">
         <div
           class="q-px-md q-py-xs text-grey-2 name"

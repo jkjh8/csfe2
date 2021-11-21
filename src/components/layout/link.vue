@@ -61,7 +61,9 @@
           <router-link class="link" to="/admin/users"
             >사용자관리</router-link
           >
-          <router-link class="link" to="">파일관리</router-link>
+          <router-link class="link" to="/admin/files"
+            >파일관리</router-link
+          >
           <router-link class="link" to="/admin/systemlog"
             >시스템로그</router-link
           >

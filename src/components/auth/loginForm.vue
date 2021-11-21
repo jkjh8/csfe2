@@ -1,8 +1,11 @@
 <template>
   <q-form @submit="onLogin">
-    <q-card class="shadow-10" style="width: 25rem">
+    <q-card class="shadow-15" style="width: 25rem">
       <q-card-section class="pa-none gradient-red">
-        <div class="q-px-md q-py-xs text-grey-2 name" style="font-size: 1.2rem">
+        <div
+          class="q-px-md q-py-xs text-grey-2 name"
+          style="font-size: 1.2rem"
+        >
           <span>
             <q-icon name="svguse:icons.svg#user"></q-icon>
           </span>
@@ -13,7 +16,11 @@
       <q-card-section v-if="error">
         <div
           class="q-px-md q-py-sm text-white"
-          style="background: red; border-radius: 1rem; text-align: center"
+          style="
+            background: red;
+            border-radius: 1rem;
+            text-align: center;
+          "
         >
           {{ error }}
         </div>
@@ -44,7 +51,11 @@
             </template>
           </q-input>
           <div class="row justify-end">
-            <q-checkbox v-model="saveEmail" left-label label="이메일저장" />
+            <q-checkbox
+              v-model="saveEmail"
+              left-label
+              label="이메일저장"
+            />
             <q-checkbox
               v-model="userInfo.keepLoggedIn"
               left-label
@@ -94,7 +105,10 @@ export default {
     async function onLogin() {
       $q.loading.show()
       error.value = ''
-      localStorage.setItem('keepLoggedIn', userInfo.value.keepLoggedIn)
+      localStorage.setItem(
+        'keepLoggedIn',
+        userInfo.value.keepLoggedIn
+      )
       localStorage.setItem('saveEmail', saveEmail.value)
       if (saveEmail.value) {
         localStorage.setItem('email', userInfo.value.email)
@@ -135,7 +149,8 @@ export default {
       rules: {
         email: [
           (value) => !!value || '이메일을 입력하세요',
-          (value) => /.+@.+\..+/.test(value) || '이메일 형식이 아닙니다'
+          (value) =>
+            /.+@.+\..+/.test(value) || '이메일 형식이 아닙니다'
         ],
         password: [
           (value) => !!value || '패스워드를 입력하세요',

@@ -70,6 +70,16 @@ const routes = [
     ]
   },
   {
+    path: '/admin/files',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('src/pages/admin/files.vue')
+      }
+    ]
+  },
+  {
     path: '/admin/systemlog',
     component: () => import('layouts/MainLayout.vue'),
     children: [

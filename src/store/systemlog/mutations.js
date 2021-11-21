@@ -9,3 +9,7 @@ export function rowsPerPage(state, payload) {
 export function updateSystemlogs(state, payload) {
   state.log = payload
 }
+
+export function updateSearch(state, payload) {
+  state.search = payload
+}

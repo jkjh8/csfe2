@@ -1,6 +1,6 @@
 <template>
   <div
-    class="shadow-10"
+    class="shadow-15"
     style="border-radius: 0.5rem; overflow: hidden"
   >
     <q-table
@@ -29,7 +29,7 @@
       hide-pagination
     >
       <template #header="props">
-        <q-tr :props="props" class="gradient-red text-white">
+        <q-tr :props="props" class="gradient-green text-grey-10">
           <q-th
             v-for="col in props.cols"
             :key="col.name"
@@ -81,15 +81,19 @@
           </q-td>
 
           <q-td key="message" :props="props">
-            <div>
+            <div class="hiddenText">
               {{ props.row.message }}
             </div>
             <q-tooltip
               :delay="1000"
               anchor="center right"
               :offset="[-30, 10]"
-              max-width="16rem"
-              style="background: rgba(100, 100, 50, 0.8)"
+              max-width="18rem"
+              max-height="16rem"
+              style="
+                background: rgba(100, 100, 50, 0.8);
+                white-space: normal;
+              "
             >
               {{ props.row.message }}
             </q-tooltip>
@@ -196,5 +200,13 @@ export default {
   position: absolute;
   right: 10%;
   margin-top: 0.7rem;
+}
+.hiddenText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1rem;
+  max-height: 2rem;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 </style>
