@@ -41,8 +41,9 @@
             :key="col.name"
             :props="props"
             style="font-family: 나눔고딕; font-weight: bold"
-            >{{ col.label }}</q-th
           >
+            {{ col.label }}
+          </q-th>
         </q-tr>
       </template>
 

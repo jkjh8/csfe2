@@ -41,7 +41,7 @@ import { ref, onMounted, onBeforeMount, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 
-import EventLog from '@/components/eventlog/eventlog'
+import EventLog from '@/components/eventlog/table'
 
 export default {
   components: { EventLog },

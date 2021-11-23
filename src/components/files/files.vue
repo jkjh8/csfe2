@@ -1,7 +1,15 @@
 <template>
   <q-card class="shadow-10" style="border-radius: 0.8rem">
     <q-card-section class="q-pa-none gradient-red">
-      <div class="q-px-md q-py-sm row justify-between items-center text-white">
+      <div
+        class="
+          q-px-md q-py-sm
+          row
+          justify-between
+          items-center
+          text-white
+        "
+      >
         <div class="q-gutter-sm row items-center">
           <div>
             <q-icon
@@ -10,11 +18,17 @@
               size="md"
             />
           </div>
-          <div class="name q-ml-sm" style="font-size: 1.2rem">Folder</div>
+          <div class="name q-ml-sm" style="font-size: 1.2rem">
+            Folder
+          </div>
         </div>
         <div class="q-ml-md row items-center q-gutter-xs">
           <span>/</span>
-          <q-breadcrumbs class="q-mr-md" gutter="xs" active-color="white">
+          <q-breadcrumbs
+            class="q-mr-md"
+            gutter="xs"
+            active-color="white"
+          >
             <q-breadcrumbs-el
               class="folder"
               v-for="(folder, index) in folders"
@@ -99,7 +113,9 @@
           <template #body="props">
             <q-tr
               :props="props"
-              :class="props.row.type === 'directory' ? 'directory' : ''"
+              :class="
+                props.row.type === 'directory' ? 'directory' : ''
+              "
               @click="fnClickItem(props.row)"
             >
               <q-td :props="props" key="type">
@@ -130,20 +146,21 @@
                 <div>
                   <q-btn
                     v-if="
-                      props.row.type === 'audio' || props.row.type === 'video'
+                      props.row.type === 'audio' ||
+                      props.row.type === 'video'
                     "
                     round
                     flat
                     icon="svguse:icons.svg#play"
                     size="sm"
-                    color="blue"
+                    color="green"
                   />
                   <q-btn
                     round
                     flat
                     icon="svguse:icons.svg#trash-fill"
                     size="sm"
-                    color="red"
+                    color="red-10"
                     @click.prevent.stop="fnDelete(props.row)"
                   />
                 </div>
@@ -175,7 +192,6 @@ export default {
     const folders = ref(['media'])
 
     async function fnMoveFolder(idx) {
-      console.log(idx)
       if (idx === 0) {
         folders.value = []
       } else {
@@ -216,11 +232,12 @@ export default {
             },
             onUploadProgress: (progress) => {
               console.log(
-                parseInt(Math.round((progress.loaded / progress.total) * 100))
+                parseInt(
+                  Math.round((progress.loaded / progress.total) * 100)
+                )
               )
             }
           })
-          console.log(r)
           await fnUpdateFolder()
         } catch (err) {
           console.error(err)
@@ -240,7 +257,9 @@ export default {
     }
 
     async function fnUpdateFolder() {
-      const r = await api.post('/api/files/get', { folder: folders.value })
+      const r = await api.post('/api/files/get', {
+        folder: folders.value
+      })
       files.value = r.data.files.sort(function (a, b) {
         if (a.type === 'directory') {
           return -1

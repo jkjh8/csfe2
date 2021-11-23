@@ -38,53 +38,45 @@ const routes = [
   },
 
   {
-    path: '/files',
+    path: '/devices',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
-        path: '',
-        component: () => import('src/pages/files/files.vue')
+        path: 'devices',
+        component: () => import('src/pages/devices/devices.vue')
       }
     ]
   },
 
   {
-    path: '/eventlog',
+    path: '/management',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
-        path: '',
-        component: () => import('src/pages/eventlog/eventlog.vue')
+        path: 'files',
+        component: () => import('src/pages/management/files.vue')
+      },
+      {
+        path: 'eventlog',
+        component: () => import('src/pages/management/eventlog.vue')
       }
     ]
   },
 
   {
-    path: '/admin/users',
+    path: '/admin',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
-        path: '',
+        path: 'users',
         component: () => import('src/pages/admin/users.vue')
-      }
-    ]
-  },
-  {
-    path: '/admin/files',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
+      },
       {
-        path: '',
+        path: 'files',
         component: () => import('src/pages/admin/files.vue')
-      }
-    ]
-  },
-  {
-    path: '/admin/systemlog',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
+      },
       {
-        path: '',
+        path: 'systemlog',
         component: () => import('src/pages/admin/systemlog.vue')
       }
     ]

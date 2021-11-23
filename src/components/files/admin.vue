@@ -26,7 +26,7 @@
           <q-breadcrumbs
             class="q-mr-md"
             gutter="xs"
-            active-color="white"
+            active-color="grey-8"
           >
             <q-breadcrumbs-el
               class="folder"
@@ -196,7 +196,6 @@ export default {
     const folders = ref([])
 
     async function fnMoveFolder(idx) {
-      console.log(idx)
       if (idx === 0) {
         folders.value = []
       } else {
@@ -243,7 +242,6 @@ export default {
               )
             }
           })
-          console.log(r)
           await fnUpdateFolder()
         } catch (err) {
           console.error(err)

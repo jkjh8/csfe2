@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { onMounted } from 'vue'
+import { onMounted, onBeforeMount, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 
@@ -28,7 +28,7 @@ export default {
     const $q = useQuasar()
 
     onMounted(async () => {
-      if (!user.admin) {
+      if (!user.value.admin) {
       }
     })
 

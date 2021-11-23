@@ -6,6 +6,7 @@ import user from './user'
 import users from './users'
 import eventlog from './eventlog'
 import systemlog from './systemlog'
+import devices from './devices'
 
 let Store
 
@@ -15,7 +16,8 @@ export default store(function (/* { ssrContext } */) {
       user,
       users,
       eventlog,
-      systemlog
+      systemlog,
+      devices
     },
 
     // enable strict mode (adds overhead!)

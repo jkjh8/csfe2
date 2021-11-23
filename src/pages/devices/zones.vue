@@ -4,13 +4,14 @@
       <div class="row justify-start items-end q-gutter-sm">
         <q-icon name="svguse:icons.svg#card-fill" size="sm" />
         <span class="name" style="font-size: 1.4rem"
-          >시스템 로그</span
+          >방송 구간 설정</span
         >
         <span class="caption">
-          총 {{ systemlog.totalPages }}개의 페이지
-          {{ systemlog.totalDocs }}개의 이벤트 로그가 있습니다</span
+          총 {{ eventlog.totalPages }}개의 페이지
+          {{ eventlog.totalDocs }}개의 이벤트 로그가 있습니다</span
         >
       </div>
+
       <div>
         <q-input
           v-model="searchKeyword"
@@ -30,7 +31,7 @@
       </div>
     </div>
     <div class="q-mt-md">
-      <SystemLog />
+      <EventLog />
     </div>
   </div>
 </template>
@@ -40,22 +41,21 @@ import { ref, onMounted, onBeforeMount, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 
-import SystemLog from '@/components/systemlog/table'
+import EventLog from '@/components/eventlog/eventlog'
 
 export default {
-  components: { SystemLog },
+  components: { EventLog },
   setup() {
     const { state, commit, dispatch } = useStore()
     const $q = useQuasar()
-
-    const systemlog = computed(() => state.systemlog.log)
+    const eventlog = computed(() => state.eventlog.eventlog)
     const searchKeyword = ref('')
 
     async function fnSearch() {
       $q.loading.show()
       try {
-        await commit('systemlog/updateSearch', searchKeyword.value)
-        await dispatch('systemlog/getSystemlogs')
+        commit('eventlog/updateSearch', searchKeyword.value)
+        dispatch('eventlog/getEventlogs')
       } catch (e) {
         console.error(e)
       }
@@ -65,7 +65,7 @@ export default {
     onMounted(async () => {
       $q.loading.show()
       try {
-        await dispatch('systemlog/getSystemlogs')
+        await dispatch('eventlog/getEventlogs')
       } catch (err) {
         console.error(err)
       }
@@ -91,10 +91,16 @@ export default {
     })
 
     return {
-      systemlog,
       searchKeyword,
+      eventlog,
       fnSearch
     }
   }
 }
 </script>
+
+<style scoped>
+.btn-icon:hover {
+  cursor: pointer;
+}
+</style>

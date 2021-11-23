@@ -25,8 +25,12 @@
         :offset="[100, 5]"
       >
         <div class="q-pa-sm">
-          <router-link class="link" to="">방송구간설정</router-link>
-          <router-link class="link" to="">방송장비설정</router-link>
+          <router-link class="link" to="/devices/zones"
+            >방송구간설정</router-link
+          >
+          <router-link class="link" to="/devices/devices"
+            >방송장비설정</router-link
+          >
         </div>
       </q-menu>
     </button>
@@ -40,8 +44,10 @@
         :offset="[70, 5]"
       >
         <div class="q-pa-sm">
-          <router-link class="link" to="/files">파일관리</router-link>
-          <router-link class="link" to="/eventlog"
+          <router-link class="link" to="/management/files"
+            >파일관리</router-link
+          >
+          <router-link class="link" to="/management/eventlog"
             >이벤트로그</router-link
           >
         </div>

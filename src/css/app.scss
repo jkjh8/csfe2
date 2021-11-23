@@ -44,15 +44,19 @@
 .gradient-green {
   background: linear-gradient(
       90deg,
-      rgba(0, 255, 255, 1),
+      rgba(0, 200, 230, 1),
       rgba(255, 0, 0, 0) 60.71%
     ),
     linear-gradient(
       160deg,
-      rgba(255, 255, 0, 0.6),
-      rgba(0, 0, 0, 0) 90.71%
+      rgba(100, 100, 0, 0.7),
+      rgba(0, 0, 0, 0) 80.71%
     ),
-    linear-gradient(300deg, rgba(0, 255, 0, 1), rgba(0, 0, 0, 0) 60%);
+    linear-gradient(
+      300deg,
+      rgba(0, 255, 0, 0.8),
+      rgba(0, 0, 0, 0) 60%
+    );
   color: rgb(50, 50, 50);
 }
 
@@ -61,8 +65,16 @@
   font-weight: bold;
 }
 
-.captioni {
+.caption {
   font-family: 나눔고딕;
   font-weight: nomal;
-  font-size: 0.5rem;
+}
+
+.qsys {
+  color: rgb(0, 117, 185);
+  text-transform: uppercase;
+}
+.barix {
+  color: black;
+  text-transform: uppercase;
 }

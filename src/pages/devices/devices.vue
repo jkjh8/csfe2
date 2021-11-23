@@ -2,70 +2,58 @@
   <div style="margin: 5% 10% 0 10%">
     <div class="row justify-between items-center">
       <div class="row justify-start items-end q-gutter-sm">
-        <q-icon name="svguse:icons.svg#card-fill" size="sm" />
+        <q-icon name="svguse:icons.svg#device-tablet" size="sm" />
         <span class="name" style="font-size: 1.4rem"
-          >시스템 로그</span
+          >방송장비 설정</span
         >
         <span class="caption">
-          총 {{ systemlog.totalPages }}개의 페이지
-          {{ systemlog.totalDocs }}개의 이벤트 로그가 있습니다</span
+          총 {{ deviceCount }}개의 디바이스 중 {{ deviceError }}개의
+          디바이스가 점검이 필요합니다</span
         >
       </div>
+
       <div>
-        <q-input
-          v-model="searchKeyword"
-          dense
-          filled
-          label="검색"
-          @keyup.enter="fnSearch"
-        >
+        <q-input v-model="searchKeyword" dense filled label="검색">
           <template #append>
-            <q-icon
-              class="btn-icon"
-              name="search"
-              @click="fnSearch"
-            />
+            <q-icon class="btn-icon" name="search" />
           </template>
         </q-input>
       </div>
     </div>
     <div class="q-mt-md">
-      <SystemLog />
+      <EventLog />
     </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted, onBeforeMount, computed } from 'vue'
+import { onMounted, onBeforeMount, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 
-import SystemLog from '@/components/systemlog/table'
+import EventLog from '@/components/devices/table'
 
 export default {
-  components: { SystemLog },
+  components: { EventLog },
   setup() {
-    const { state, commit, dispatch } = useStore()
+    const { state, getters, commit, dispatch } = useStore()
     const $q = useQuasar()
-
-    const systemlog = computed(() => state.systemlog.log)
-    const searchKeyword = ref('')
-
-    async function fnSearch() {
-      $q.loading.show()
-      try {
-        await commit('systemlog/updateSearch', searchKeyword.value)
-        await dispatch('systemlog/getSystemlogs')
-      } catch (e) {
-        console.error(e)
+    const eventlog = computed(() => state.eventlog.eventlog)
+    const searchKeyword = computed({
+      get() {
+        return state.devices.search
+      },
+      set(v) {
+        return commit('devices/updateSearch', v)
       }
-      $q.loading.hide()
-    }
+    })
+    const deviceCount = computed(() => getters['devices/deviceCount'])
+    const deviceError = computed(() => getters['devices/error'])
 
     onMounted(async () => {
       $q.loading.show()
       try {
-        await dispatch('systemlog/getSystemlogs')
+        await dispatch('devices/getDevices')
       } catch (err) {
         console.error(err)
       }
@@ -91,10 +79,17 @@ export default {
     })
 
     return {
-      systemlog,
       searchKeyword,
-      fnSearch
+      eventlog,
+      deviceCount,
+      deviceError
     }
   }
 }
 </script>
+
+<style scoped>
+.btn-icon:hover {
+  cursor: pointer;
+}
+</style>
