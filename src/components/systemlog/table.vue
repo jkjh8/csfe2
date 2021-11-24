@@ -80,23 +80,17 @@
             </div>
           </q-td>
 
-          <q-td key="message" :props="props">
+          <q-td key="message" :props="props" style="max-width: 500px">
             <div class="hiddenText">
               {{ props.row.message }}
             </div>
-            <q-tooltip
-              :delay="1000"
-              anchor="center right"
-              :offset="[-30, 10]"
-              max-width="18rem"
-              max-height="16rem"
-              style="
-                background: rgba(100, 100, 50, 0.8);
-                white-space: normal;
-              "
+            <q-popup-proxy
+              style="background: rgba(10, 20, 10, 0.8); color: white"
             >
-              {{ props.row.message }}
-            </q-tooltip>
+              <div class="q-pa-md">
+                {{ props.row.message }}
+              </div>
+            </q-popup-proxy>
           </q-td>
         </q-tr>
       </template>

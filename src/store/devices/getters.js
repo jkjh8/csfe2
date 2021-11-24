@@ -11,3 +11,13 @@ export function error(state) {
   })
   return errorDevice.length
 }
+
+export function getMasters(state) {
+  const masters = []
+  state.devices.forEach((device) => {
+    if (device.mode === 'Master') {
+      masters.push(device)
+    }
+  })
+  return masters
+}

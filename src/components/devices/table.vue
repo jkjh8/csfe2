@@ -32,6 +32,13 @@
         sortable: true
       },
       {
+        name: 'mode',
+        align: 'center',
+        label: '동작방식',
+        field: 'mode',
+        sortable: true
+      },
+      {
         name: 'createdAt',
         align: 'center',
         label: '등록일',
@@ -100,6 +107,12 @@
           </div>
           <div v-if="props.row.devicetype === 'Barix'" class="barix">
             {{ props.row.devicetype }}
+          </div>
+        </q-td>
+
+        <q-td key="mode" :props="props">
+          <div>
+            {{ props.row.mode.toUpperCase() }}
           </div>
         </q-td>
 

@@ -12,12 +12,20 @@
         >
       </div>
 
-      <div>
+      <div class="row justify-start items-center">
         <q-input v-model="searchKeyword" dense filled label="검색">
           <template #append>
             <q-icon class="btn-icon" name="search" />
           </template>
         </q-input>
+        <q-btn
+          class="q-mx-md"
+          round
+          flat
+          color="green-8"
+          icon="svguse:icons.svg#plus-circle-fill"
+          @click="fnAdd"
+        />
       </div>
     </div>
     <div class="q-mt-md">
@@ -32,6 +40,7 @@ import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 
 import EventLog from '@/components/devices/table'
+import Add from '@/components/dialog/devices/add'
 
 export default {
   components: { EventLog },
@@ -49,6 +58,12 @@ export default {
     })
     const deviceCount = computed(() => getters['devices/deviceCount'])
     const deviceError = computed(() => getters['devices/error'])
+
+    function fnAdd() {
+      $q.dialog({
+        component: Add
+      })
+    }
 
     onMounted(async () => {
       $q.loading.show()
@@ -82,7 +97,8 @@ export default {
       searchKeyword,
       eventlog,
       deviceCount,
-      deviceError
+      deviceError,
+      fnAdd
     }
   }
 }
