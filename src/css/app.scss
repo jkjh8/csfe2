@@ -14,6 +14,15 @@
   font-weight: bold;
 }
 
+.hiddenText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1rem;
+  max-height: 2rem;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
 .gradient-teal {
   background: rgb(0, 241, 255);
   background: linear-gradient(

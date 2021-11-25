@@ -62,6 +62,8 @@ export default {
     function fnAdd() {
       $q.dialog({
         component: Add
+      }).onOk(async () => {
+        dispatch('devices/getDevices')
       })
     }
 

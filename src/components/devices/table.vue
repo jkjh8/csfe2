@@ -127,9 +127,26 @@
             <q-btn
               flat
               round
+              icon="svguse:icons.svg#refresh"
+              size="sm"
+              color="primary"
+              @click="refreshDevice(props.row)"
+            >
+              <q-tooltip
+                style="background: rgb(50, 50, 50, 0.6)"
+                anchor="top middle"
+                self="center middle"
+              >
+                새로고침
+              </q-tooltip>
+            </q-btn>
+            <q-btn
+              flat
+              round
               icon="svguse:icons.svg#clipboard-list"
               size="sm"
               color="grey"
+              @click="detailInfo(props.row)"
             >
               <q-tooltip
                 style="background: rgb(50, 50, 50, 0.6)"
@@ -145,6 +162,7 @@
               icon="svguse:icons.svg#pencil-fill"
               size="sm"
               color="green"
+              @click="editItem(props.row)"
             >
               <q-tooltip
                 style="background: rgb(50, 50, 50, 0.6)"
@@ -160,6 +178,7 @@
               icon="svguse:icons.svg#trash-fill"
               size="sm"
               color="red-10"
+              @click="deleteItem(props.row)"
             >
               <q-tooltip
                 style="background: rgb(50, 50, 50, 0.6)"
@@ -180,22 +199,91 @@
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
-import moment from 'moment'
+import { api } from '@/boot/axios'
+
+import { dateFormat } from '@/api/time'
+import noti from '@/api/notify'
+
+import Info from '@/components/dialog/devices/info'
+import Add from '@/components/dialog/devices/add'
+import Delete from '@/components/dialog/delete'
 
 export default {
   setup() {
-    const { state } = useStore()
+    const { state, dispatch } = useStore()
+    const { notifyError } = noti()
+    const $q = useQuasar()
     const devices = computed(() => state.devices.devices)
     const search = computed(() => state.devices.search)
 
-    const dateFormat = (date) => {
-      return moment(date).format('YYYY-MM-DD hh:mm:ss')
+    const refreshDevice = async (item) => {
+      try {
+        await api.get(
+          `/api/devices/refresh?ipaddress=${item.ipaddress}&devicetype=${item.devicetype}`
+        )
+        dispatch('devices/getDevices')
+      } catch (e) {
+        console.error(e)
+        notifyError({
+          message: '장비 데이터를 갱신할 수 없습니다'
+        })
+      }
+    }
+
+    const detailInfo = (item) => {
+      $q.dialog({
+        component: Info,
+        componentProps: { item: item }
+      })
+    }
+
+    const editItem = (item) => {
+      try {
+        $q.dialog({
+          component: Add,
+          componentProps: {
+            item: item
+          }
+        }).onOk(async () => {
+          await dispatch('devices/getDevices')
+        })
+      } catch (e) {
+        console.error(e)
+        notifyError({
+          message: '장비 데이터를 갱신할 수 없습니다'
+        })
+      }
+    }
+
+    const deleteItem = (item) => {
+      $q.dialog({
+        component: Delete,
+        componentProps: {
+          item: item
+        }
+      }).onOk(async (rt) => {
+        $q.loading.show()
+        try {
+          await api.get(`/api/devices/delete?id=${rt._id}`)
+          await dispatch('devices/getDevices')
+        } catch (e) {
+          console.error(e)
+          notifyError({
+            message: '장비를 삭제 할 수 없습니다'
+          })
+        }
+        $q.loading.hide()
+      })
     }
 
     return {
       devices,
       search,
-      dateFormat
+      dateFormat,
+      refreshDevice,
+      detailInfo,
+      editItem,
+      deleteItem
     }
   }
 }

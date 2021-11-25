@@ -1,17 +1,21 @@
 <template>
-  <!-- notice dialogRef here -->
   <q-dialog ref="dialogRef" @hide="onDialogHide">
     <q-card class="q-dialog-plugin">
-      <!--
-        ...content
-        ... use q-card-section for it?
-      -->
-      <q-card-section class="bg-grey-1">
+      <q-card-section class="bg-grey-2">
         <div class="row items-center q-gutter-sm">
-          <q-avatar text-color="red" size="md">
-            <q-icon name="svguse:icons.svg#trash" color="red" size="1.5rem" />
+          <q-avatar text-color="red" size="2.5">
+            <q-icon
+              name="svguse:icons.svg#trash"
+              color="red"
+              size="1.5rem"
+            />
           </q-avatar>
-          <div style="font-size: 1.2rem">삭제</div>
+          <div>
+            <div class="name" style="font-size: 1rem">삭제</div>
+            <div class="caption" style="font-size: 0.5rem">
+              다음 사항을 삭제 합니다
+            </div>
+          </div>
         </div>
       </q-card-section>
 
@@ -58,7 +62,8 @@
                 </div>
               </div>
               <div>
-                삭제 후에는 복구가 불가능 합니다. 다시 한번 확인 해주세요.
+                삭제 후에는 복구가 불가능 합니다. 다시 한번 확인
+                해주세요.
               </div>
             </div>
           </div>
@@ -109,10 +114,17 @@
       <!-- buttons example -->
       <q-card-actions class="bg-grey-1" align="right">
         <div class="q-mx-sm q-gutter-sm">
-          <q-btn label="취소" rounded unelevated @click="onCancelClick" />
+          <q-btn
+            label="취소"
+            style="width: 5em"
+            rounded
+            unelevated
+            @click="onCancelClick"
+          />
           <q-btn
             color="negative"
             label="확인"
+            style="width: 5rem"
             unelevated
             rounded
             @click="onOKClick(item ? item : file)"

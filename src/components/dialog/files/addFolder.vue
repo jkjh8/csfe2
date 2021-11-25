@@ -1,16 +1,23 @@
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide">
     <q-card class="q-dialog-plugin">
-      <q-card-section class="bg-grey-1">
+      <q-card-section class="bg-grey-2">
         <div class="row items-center q-gutter-sm">
-          <q-avatar size="md">
+          <q-avatar size="2.5rem">
             <q-icon
               name="svguse:icons.svg#folder-fill"
               color="yellow"
               size="1.5rem"
             />
           </q-avatar>
-          <div style="font-size: 1.2rem">폴더 추가</div>
+          <div>
+            <div class="name" style="font-size: 1.2rem">
+              폴더 추가
+            </div>
+            <div class="caption" style="font-size: 0.5rem">
+              해당 폴더에 새로운 폴더를 생성합니다
+            </div>
+          </div>
         </div>
       </q-card-section>
 
@@ -39,9 +46,16 @@
 
       <q-card-actions class="bg-grey-1" align="right">
         <div class="q-mx-sm q-gutter-sm">
-          <q-btn label="취소" rounded unelevated @click="onCancelClick" />
+          <q-btn
+            label="취소"
+            style="width: 5rem"
+            rounded
+            unelevated
+            @click="onCancelClick"
+          />
           <q-btn
             color="negative"
+            style="width: 5rem"
             label="확인"
             unelevated
             rounded

@@ -34,6 +34,7 @@
             filled
             :rules="rules.name"
             label="이름"
+            lazy-rules
           />
 
           <q-input
@@ -42,6 +43,7 @@
             filled
             :rules="rules.email"
             label="이메일"
+            lazy-rules
           >
             <template v-slot:after>
               <q-btn

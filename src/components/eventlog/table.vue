@@ -18,6 +18,12 @@
           field: 'priority'
         },
         {
+          name: 'source',
+          align: 'center',
+          label: '출처',
+          field: 'source'
+        },
+        {
           name: 'zones',
           align: 'center',
           label: '지역',
@@ -87,9 +93,25 @@
             </div>
           </q-td>
 
-          <q-td key="zones" :props="props">
+          <q-td key="source" :props="props">
             <div>
+              {{ props.row.source }}
+            </div>
+          </q-td>
+
+          <q-td key="zones" :props="props" style="max-width: 100px">
+            <div class="hiddenText">
               {{ props.row.zones.join(',') }}
+              <q-tooltip
+                :delay="1000"
+                anchor="center right"
+                :offset="[-30, 10]"
+                max-width="18rem"
+                max-height="16rem"
+                style="background: rgba(100, 100, 50, 0.8)"
+              >
+                {{ props.row.zones.join(',') }}
+              </q-tooltip>
             </div>
           </q-td>
 
@@ -210,13 +232,5 @@ export default {
   position: absolute;
   right: 10%;
   margin-top: 0.7rem;
-}
-.hiddenText {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1rem;
-  max-height: 2rem;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
 }
 </style>
