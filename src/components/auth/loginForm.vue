@@ -69,7 +69,7 @@
         <div class="q-px-md q-pb-sm fit row">
           <q-btn
             class="full-width"
-            style="background: #006b82; color: #fff"
+            color="grey-7"
             label="로그인"
             type="submit"
           />

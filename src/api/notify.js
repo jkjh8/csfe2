@@ -8,7 +8,16 @@ export default function nofi() {
       message: message.message,
       caption: message.caption,
       position: 'top',
-      color: 'primary'
+      color: 'primary',
+      actions: [
+        {
+          icon: 'close',
+          round: true,
+          size: 'sm',
+          color: 'white',
+          handler: () => {}
+        }
+      ]
     })
   }
 
@@ -18,7 +27,17 @@ export default function nofi() {
       message: message.message,
       caption: message.caption ?? '잠시후에 다시 시도해주세요',
       position: 'top',
-      color: 'negative'
+      color: 'negative',
+      textColor: 'white',
+      actions: [
+        {
+          icon: 'close',
+          round: true,
+          size: 'sm',
+          color: 'white',
+          handler: () => {}
+        }
+      ]
     })
   }
   return { notifyInfo, notifyError }

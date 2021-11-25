@@ -14,9 +14,11 @@
 </template>
 
 <script>
-import { onBeforeMount } from 'vue'
+import { onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import { useRouter } from 'vue-router'
+import notify from '@/api/notify'
 
 import Files from '@/components/files/files'
 
@@ -24,20 +26,19 @@ export default {
   components: { Files },
   setup() {
     const { dispatch } = useStore()
+    const router = useRouter()
     const $q = useQuasar()
+    const { notifyError } = notify()
 
-    onBeforeMount(async () => {
+    onMounted(async () => {
       $q.loading.show()
       try {
         await dispatch('user/login')
       } catch (err) {
         $q.loading.hide()
-        $q.notify({
-          icon: 'svguse:icons.svg#exclamation',
+        notifyError({
           message: '사용자 로그인이 필요합니다',
-          caption: '로그인 페이지로 이동해서 로그인후 이용하세요.',
-          color: 'red',
-          position: 'center'
+          caption: '로그인 페이지로 이동해서 로그인후 이용하세요.'
         })
         router.push('/')
       }

@@ -18,6 +18,7 @@ import { computed, onMounted, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
+import notify from '@/api/notify'
 
 import Users from '@/components/users/users'
 
@@ -27,6 +28,7 @@ export default {
     const { getters, dispatch } = useStore()
     const router = useRouter()
     const $q = useQuasar()
+    const { notifyError } = notify()
     const usersCount = computed(() => getters['users/usersCount'])
 
     onMounted(async () => {
@@ -35,12 +37,9 @@ export default {
         await dispatch('users/updateUsers')
       } catch (err) {
         $q.loading.hide()
-        $q.notify({
-          icon: 'svguse:icons.svg#exclamation',
+        notifyError({
           message: '사용자가 권한이 없습니다.',
-          caption: '접근을 하려면 관리자 권한이 필요합니다.',
-          color: 'red',
-          position: 'center'
+          caption: '접근을 하려면 관리자 권한이 필요합니다.'
         })
         router.push('/')
       }
@@ -53,12 +52,9 @@ export default {
         await dispatch('user/login')
       } catch (err) {
         $q.loading.hide()
-        $q.notify({
-          icon: 'svguse:icons.svg#exclamation',
+        notifyError({
           message: '사용자 로그인이 필요합니다',
-          caption: '로그인 페이지로 이동해서 로그인후 이용하세요.',
-          color: 'red',
-          position: 'center'
+          caption: '로그인 페이지로 이동해서 로그인후 이용하세요.'
         })
         router.push('/')
       }

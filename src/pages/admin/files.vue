@@ -15,8 +15,10 @@
 
 <script>
 import { onMounted, onBeforeMount, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import notify from '@/api/notify'
 
 import Files from '@/components/files/admin'
 
@@ -24,26 +26,27 @@ export default {
   components: { Files },
   setup() {
     const { dispatch } = useStore()
+    const router = useRouter()
     const user = computed(() => state.user.user)
     const $q = useQuasar()
-
-    onMounted(async () => {
-      if (!user.value.admin) {
-      }
-    })
+    const { notifyError } = notify()
 
     onBeforeMount(async () => {
       $q.loading.show()
       try {
         await dispatch('user/login')
+        if (!user.value.admin) {
+          notifyError({
+            message: '관리자 권한이 필요합니다',
+            caption: '접근을 위해서 관리자 권한이 필요합니다.'
+          })
+          router.push('/')
+        }
       } catch (err) {
         $q.loading.hide()
-        $q.notify({
-          icon: 'svguse:icons.svg#exclamation',
+        notifyError({
           message: '사용자 로그인이 필요합니다',
-          caption: '로그인 페이지로 이동해서 로그인후 이용하세요.',
-          color: 'red',
-          position: 'center'
+          caption: '로그인 페이지로 이동해서 로그인후 이용하세요.'
         })
         router.push('/')
       }
