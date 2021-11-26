@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { onMounted, onBeforeMount, computed } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'

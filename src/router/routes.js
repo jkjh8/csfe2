@@ -44,6 +44,10 @@ const routes = [
       {
         path: 'devices',
         component: () => import('src/pages/devices/devices.vue')
+      },
+      {
+        path: 'zones',
+        component: () => import('src/pages/devices/zones.vue')
       }
     ]
   },

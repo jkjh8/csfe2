@@ -8,31 +8,18 @@
         >
         <span class="caption">
           총 {{ eventlog.totalPages }}개의 페이지
-          {{ eventlog.totalDocs }}개의 이벤트 로그가 있습니다</span
-        >
-      </div>
-
-      <div>
-        <q-input
-          v-model="searchKeyword"
-          dense
-          filled
-          label="검색"
-          @keyup.enter="fnSearch"
-        >
-          <template #append>
-            <q-icon
-              class="btn-icon"
-              name="search"
-              @click="fnSearch"
-            />
-          </template>
-        </q-input>
+          {{ eventlog.totalDocs }}개의 이벤트 로그가 있습니다
+        </span>
       </div>
     </div>
-    <div class="q-mt-md">
-      <EventLog />
-    </div>
+    <dl class="q-mt-md q-gutter-xl row wrap justify-center">
+      <dt>
+        <EventLog />
+      </dt>
+      <dt>
+        <EventLog />
+      </dt>
+    </dl>
   </div>
 </template>
 
@@ -41,7 +28,7 @@ import { ref, onMounted, onBeforeMount, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 
-import EventLog from '@/components/eventlog/eventlog'
+import EventLog from '@/components/eventlog/table'
 
 export default {
   components: { EventLog },
