@@ -14,10 +14,10 @@
     </div>
     <dl class="q-mt-md q-gutter-xl row wrap justify-center">
       <dt>
-        <EventLog />
+        <Masters />
       </dt>
       <dt>
-        <EventLog />
+        <Slaves />
       </dt>
     </dl>
   </div>
@@ -28,10 +28,11 @@ import { ref, onMounted, onBeforeMount, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 
-import EventLog from '@/components/eventlog/table'
+import Masters from '@/components/devices/masters'
+import Slaves from '@/components/devices/slaves'
 
 export default {
-  components: { EventLog },
+  components: { Masters, Slaves },
   setup() {
     const { state, commit, dispatch } = useStore()
     const $q = useQuasar()
@@ -52,9 +53,9 @@ export default {
     onMounted(async () => {
       $q.loading.show()
       try {
-        await dispatch('eventlog/getEventlogs')
-      } catch (err) {
-        console.error(err)
+        await dispatch('devices/getDevices')
+      } catch (e) {
+        console.error(e)
       }
       $q.loading.hide()
     })

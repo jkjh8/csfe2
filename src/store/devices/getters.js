@@ -25,3 +25,15 @@ export function getMasters(state) {
   }
   return masters
 }
+
+export function getSlaves(state) {
+  const slaves = []
+  if (state.devices.length) {
+    state.devices.forEach((device) => {
+      if (device.mode === 'Slave') {
+        slaves.push(device)
+      }
+    })
+  }
+  return slaves
+}

@@ -1,6 +1,7 @@
 export default function () {
   return {
     devices: [],
-    search: ''
+    search: '',
+    selected: null
   }
 }
