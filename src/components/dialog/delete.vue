@@ -148,11 +148,9 @@ export default {
 
   emits: [...useDialogPluginComponent.emits],
 
-  setup(props) {
+  setup() {
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
       useDialogPluginComponent()
-
-    console.log(props.file)
 
     return {
       dialogRef,

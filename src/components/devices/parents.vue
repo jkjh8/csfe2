@@ -19,7 +19,7 @@
         <q-list>
           <q-item
             class="q-px-lg"
-            v-for="device in masters"
+            v-for="device in parents"
             :key="device.index"
             v-ripple
             clickable
@@ -55,6 +55,27 @@
                 {{ device.ipaddress }}
               </q-item-label>
             </q-item-section>
+
+            <q-item-section side>
+              <div>
+                <q-btn
+                  flat
+                  round
+                  color="green-10"
+                  size="sm"
+                  icon="svguse:icons.svg#pencil-fill"
+                  @click.prevent.stop="fnEdit(device)"
+                />
+                <q-btn
+                  flat
+                  round
+                  color="red-10"
+                  size="sm"
+                  icon="svguse:icons.svg#trash-fill"
+                  @click.prevent.stop="fnDelete(device)"
+                />
+              </div>
+            </q-item-section>
           </q-item>
         </q-list>
       </q-scroll-area>
@@ -66,11 +87,16 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import { api } from '@/boot/axios'
+
+import Edit from '@/components/dialog/devices/add'
+import Delete from '@/components/dialog/delete'
 
 export default {
   setup() {
     const { state, getters, commit } = useStore()
-    const masters = computed(() => getters['devices/getMasters'])
+    const $q = useQuasar()
+    const parents = computed(() => getters['devices/parents'])
     const selected = computed(() => state.devices.selected)
 
     const fnClickItem = (item) => {
@@ -81,10 +107,40 @@ export default {
       }
     }
 
+    const fnEdit = (item) => {
+      $q.dialog({
+        component: Edit,
+        componentProps: { item: item }
+      }).onOk(async () => {
+        dispatch('devices/getDevices')
+      })
+    }
+
+    const fnDelete = (item) => {
+      $q.dialog({
+        component: Delete,
+        componentProps: { item: item }
+      }).onOk(async (rt) => {
+        $q.loading.show()
+        try {
+          await api.get(`/api/devices/delete?id=${rt._id}`)
+          await dispatch('devices/getDevices')
+        } catch (e) {
+          console.error(e)
+          notifyError({
+            message: '장비를 삭제 할 수 없습니다'
+          })
+        }
+        $q.loading.hide()
+      })
+    }
+
     return {
-      masters,
+      parents,
       selected,
-      fnClickItem
+      fnClickItem,
+      fnEdit,
+      fnDelete
     }
   }
 }

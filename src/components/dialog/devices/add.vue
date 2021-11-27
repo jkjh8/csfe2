@@ -23,7 +23,7 @@
         </div>
       </q-card-section>
 
-      <q-card-section v-if="error">
+      <q-card-section v-if="error" class="q-pb-none q-pt-md">
         <div class="q-mx-md">
           <div class="error">
             {{ error }}
@@ -33,7 +33,7 @@
 
       <q-form @submit="onOKClick(device)">
         <q-card-section>
-          <div class="q-ma-md">
+          <div class="q-mx-md">
             <div>
               <q-input
                 v-model="device.index"
@@ -101,8 +101,8 @@
                   dense
                   filled
                   clearable
-                  :options="masters"
-                  option-value="ipaddress"
+                  :options="parents"
+                  option-value="_id"
                   emit-value
                   map-options
                   label="Parent"
@@ -229,7 +229,7 @@ export default {
     const devices = computed(() => state.devices.devices)
 
     const indexArr = devices.value.map((device) => device.index)
-    const masters = computed(() => getters['devices/getMasters'])
+    const parents = computed(() => getters['devices/parents'])
     const error = ref('')
 
     const device = ref({
@@ -239,7 +239,6 @@ export default {
       mode: 'Master',
       devicetype: 'Q-Sys',
       parent: null,
-      children: [],
       channel: null,
       channels: 16,
       status: false
@@ -261,64 +260,38 @@ export default {
     onMounted(async () => {
       device.value.index = getIndex()
       if (props.item) {
-        device.value = { ...props.item }
+        device.value = { ...device.value, ...props.item }
       }
     })
 
     async function onOKClick(item) {
+      let r
       $q.loading.show()
       try {
-        if (item.mode === 'Master') {
-          if (item.children.length !== item.channels) {
-            const childrens = []
-            const actives = []
-            for (let i = 0; i < item.channels; i++) {
-              actives.push(false)
-              if (item.children[i]) {
-                childrens.push(item.children[i])
-              }
-            }
-            item.children = childrens
-            item.active = actives
-          }
-        } else {
-          let master
-          let arr = []
-          for (let i = 0; i < masters.value.length; i++) {
-            if (item.parent === masters.value[i].ipaddress) {
-              master = { ...masters.value[i] }
-              if (master.channels < item.channel) {
-                return (error.value =
-                  '방송채널이 존해 하지 않습니다.')
-              } else {
-                for (let j = 0; j < master.channels; j++) {
-                  if (j === item.channel - 1) {
-                    arr.push({
-                      name: item.name,
-                      ipaddress: item.ipaddress,
-                      parent: item.parent,
-                      channel: item.channel
-                    })
-                  } else {
-                    if (master.children[j]) {
-                      arr.push(master.children[j])
-                    }
-                  }
-                }
-                master.children = arr
-                await api.put('/api/devices', master)
-              }
-            }
+        if (item.mode === 'Slave') {
+          r = await api.get(
+            `/api/devices/checkChannel?parent=${item.parent}&channel=${item.channel}`
+          )
+          if (r.data) {
+            $q.loading.hide()
+            return (error.value = '채널이 중복 되었습니다')
           }
         }
 
         if (item._id) {
-          await api.put('/api/devices', item)
+          r = await api.put('/api/devices', item)
         } else {
-          await api.post('/api/devices', item)
+          r = await api.post('/api/devices', item)
+        }
+
+        if (r.data.mode === 'Slave') {
+          await api.get(
+            `/api/devices/addChild?parent=${r.data.parent}&child=${r.data._id}`
+          )
         }
         $q.loading.hide()
         onDialogOK(item)
+        console.log(r)
       } catch (err) {
         error.value = err.response.data.message
       }
@@ -340,7 +313,7 @@ export default {
       onDialogHide,
       error,
       device,
-      masters,
+      parents,
       onOKClick,
       onCancelClick: onDialogCancel
     }

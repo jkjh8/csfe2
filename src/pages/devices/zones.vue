@@ -14,10 +14,10 @@
     </div>
     <dl class="q-mt-md q-gutter-xl row wrap justify-center">
       <dt>
-        <Masters />
+        <Parents />
       </dt>
       <dt>
-        <Slaves />
+        <Childrens />
       </dt>
     </dl>
   </div>
@@ -28,11 +28,11 @@ import { ref, onMounted, onBeforeMount, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 
-import Masters from '@/components/devices/masters'
-import Slaves from '@/components/devices/slaves'
+import Parents from '@/components/devices/parents'
+import Childrens from '@/components/devices/childrens'
 
 export default {
-  components: { Masters, Slaves },
+  components: { Parents, Childrens },
   setup() {
     const { state, commit, dispatch } = useStore()
     const $q = useQuasar()

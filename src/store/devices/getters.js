@@ -14,26 +14,32 @@ export function error(state) {
   return errorDevice.length
 }
 
-export function getMasters(state) {
-  const masters = []
+export function parents(state) {
+  const parents = []
   if (state.devices.length) {
     state.devices.forEach((device) => {
       if (device.mode === 'Master') {
-        masters.push(device)
+        parents.push(device)
       }
     })
   }
-  return masters
+  return parents
 }
 
-export function getSlaves(state) {
-  const slaves = []
+export function childrens(state) {
+  const childrens = []
   if (state.devices.length) {
     state.devices.forEach((device) => {
       if (device.mode === 'Slave') {
-        slaves.push(device)
+        if (state.selected) {
+          if (device.parent._id === state.selected._id) {
+            childrens.push(device)
+          }
+        } else {
+          childrens.push(device)
+        }
       }
     })
   }
-  return slaves
+  return childrens
 }
