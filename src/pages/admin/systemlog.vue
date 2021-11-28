@@ -53,6 +53,7 @@ export default {
     const { notifyError } = notify()
 
     const systemlog = computed(() => state.systemlog.log)
+    const user = computed(() => state.user.user)
     const searchKeyword = ref('')
 
     async function fnSearch() {
@@ -78,6 +79,7 @@ export default {
           router.push('/')
         }
       } catch (err) {
+        console.error(err)
         $q.loading.hide()
         notifyError({
           message: '사용자 로그인이 필요합니다',

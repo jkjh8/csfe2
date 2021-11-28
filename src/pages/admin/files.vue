@@ -25,7 +25,7 @@ import Files from '@/components/files/admin'
 export default {
   components: { Files },
   setup() {
-    const { dispatch } = useStore()
+    const { state, dispatch } = useStore()
     const router = useRouter()
     const user = computed(() => state.user.user)
     const $q = useQuasar()
@@ -43,6 +43,7 @@ export default {
           router.push('/')
         }
       } catch (err) {
+        console.error(err)
         $q.loading.hide()
         notifyError({
           message: '사용자 로그인이 필요합니다',
