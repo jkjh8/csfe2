@@ -1,7 +1,7 @@
 <template>
   <q-card
     class="shadow-15"
-    style="width: 24rem; border-radius: 0.5rem"
+    style="width: 40%; min-width: 350px; border-radius: 0.5rem"
   >
     <q-card-section class="q-pa-none gradient-blue">
       <div class="q-pa-md text-white">
@@ -61,7 +61,16 @@
                   size="sm"
                   icon="svguse:icons.svg#pencil-fill"
                   @click="fnEdit(device)"
-                />
+                >
+                  <q-tooltip
+                    style="background: rgba(0, 0, 0, 0.4)"
+                    anchor="top middle"
+                    self="bottom middle"
+                    :offset="[10, 10]"
+                  >
+                    수정
+                  </q-tooltip>
+                </q-btn>
                 <q-btn
                   flat
                   round
@@ -69,7 +78,16 @@
                   size="sm"
                   icon="svguse:icons.svg#trash-fill"
                   @click="fnDelete(device)"
-                />
+                >
+                  <q-tooltip
+                    style="background: rgba(0, 0, 0, 0.4)"
+                    anchor="top middle"
+                    self="bottom middle"
+                    :offset="[10, 10]"
+                  >
+                    삭제
+                  </q-tooltip>
+                </q-btn>
               </div>
             </q-item-section>
           </q-item>

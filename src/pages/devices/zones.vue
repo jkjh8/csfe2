@@ -12,14 +12,10 @@
         </span>
       </div>
     </div>
-    <dl class="q-mt-md q-gutter-xl row wrap justify-center">
-      <dt>
-        <Parents />
-      </dt>
-      <dt>
-        <Childrens />
-      </dt>
-    </dl>
+    <div class="row justify-evenly">
+      <Parents class="q-mt-md" />
+      <Childrens class="q-mt-md" />
+    </div>
   </div>
 </template>
 

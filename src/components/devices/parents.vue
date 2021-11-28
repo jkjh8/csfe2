@@ -1,7 +1,7 @@
 <template>
   <q-card
     class="shadow-15"
-    style="width: 24rem; border-radius: 0.5rem"
+    style="width: 40%; min-width: 350px; border-radius: 0.5rem"
   >
     <q-card-section class="q-pa-none gradient-red">
       <div class="q-pa-md text-white">
@@ -61,11 +61,38 @@
                 <q-btn
                   flat
                   round
+                  color="grey-8"
+                  size="sm"
+                  icon="svguse:icons.svg#view-list"
+                  @click.prevent.stop="fnEditChannel(device)"
+                >
+                  <q-tooltip
+                    style="background: rgba(0, 0, 0, 0.4)"
+                    anchor="top middle"
+                    self="bottom middle"
+                    :offset="[10, 10]"
+                  >
+                    채널 수정
+                  </q-tooltip>
+                </q-btn>
+
+                <q-btn
+                  flat
+                  round
                   color="green-10"
                   size="sm"
                   icon="svguse:icons.svg#pencil-fill"
                   @click.prevent.stop="fnEdit(device)"
-                />
+                >
+                  <q-tooltip
+                    style="background: rgba(0, 0, 0, 0.4)"
+                    anchor="top middle"
+                    self="bottom middle"
+                    :offset="[10, 10]"
+                  >
+                    수정
+                  </q-tooltip>
+                </q-btn>
                 <q-btn
                   flat
                   round
@@ -73,7 +100,16 @@
                   size="sm"
                   icon="svguse:icons.svg#trash-fill"
                   @click.prevent.stop="fnDelete(device)"
-                />
+                >
+                  <q-tooltip
+                    style="background: rgba(0, 0, 0, 0.4)"
+                    anchor="top middle"
+                    self="bottom middle"
+                    :offset="[10, 10]"
+                  >
+                    삭제
+                  </q-tooltip>
+                </q-btn>
               </div>
             </q-item-section>
           </q-item>
@@ -89,6 +125,7 @@ import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { api } from '@/boot/axios'
 
+import Channels from '@/components/dialog/devices/channels'
 import Edit from '@/components/dialog/devices/add'
 import Delete from '@/components/dialog/delete'
 
@@ -105,6 +142,15 @@ export default {
       } else {
         commit('devices/selected', item)
       }
+    }
+
+    const fnEditChannel = (item) => {
+      $q.dialog({
+        component: Channels,
+        componentProps: { item: item }
+      }).onOk(async () => {
+        dispatch('devices/getDevices')
+      })
     }
 
     const fnEdit = (item) => {
@@ -139,6 +185,7 @@ export default {
       parents,
       selected,
       fnClickItem,
+      fnEditChannel,
       fnEdit,
       fnDelete
     }

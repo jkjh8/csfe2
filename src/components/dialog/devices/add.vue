@@ -270,7 +270,7 @@ export default {
       try {
         if (item.mode === 'Slave') {
           r = await api.get(
-            `/api/devices/checkChannel?parent=${item.parent}&channel=${item.channel}`
+            `/api/devices/checkChannel?parent=${item.parent._id}&child=${item._id}&channel=${item.channel}`
           )
           if (r.data) {
             $q.loading.hide()
@@ -285,6 +285,7 @@ export default {
         }
 
         if (r.data.mode === 'Slave') {
+          console.log('update master')
           await api.get(
             `/api/devices/addChild?parent=${r.data.parent}&child=${r.data._id}`
           )
