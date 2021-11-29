@@ -154,6 +154,7 @@
                     icon="svguse:icons.svg#play"
                     size="sm"
                     color="green"
+                    @click.prevent.stop="fnPreview(props.row)"
                   />
                   <q-btn
                     round
@@ -179,6 +180,7 @@ import { useQuasar, format } from 'quasar'
 import { api } from '@/boot/axios'
 import fileIcons from '@/api/fileIcons'
 
+import Preview from '@/components/dialog/preview'
 import Delete from '@/components/dialog/delete'
 import addFolder from '@/components/dialog/files/addFolder'
 import addFile from '@/components/dialog/files/addFile'
@@ -267,6 +269,13 @@ export default {
       })
     }
 
+    const fnPreview = (file) => {
+      $q.dialog({
+        component: Preview,
+        componentProps: { file: file }
+      })
+    }
+
     onMounted(async () => {
       await fnUpdateFolder()
     })
@@ -274,6 +283,7 @@ export default {
     return {
       fileIcons,
       user,
+      fnPreview,
       fnMoveFolder,
       fnClickItem,
       fnCreateFolder,

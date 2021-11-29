@@ -131,7 +131,7 @@ import Delete from '@/components/dialog/delete'
 
 export default {
   setup() {
-    const { state, getters, commit } = useStore()
+    const { state, getters, commit, dispatch } = useStore()
     const $q = useQuasar()
     const parents = computed(() => getters['devices/parents'])
     const selected = computed(() => state.devices.selected)
