@@ -11,6 +11,16 @@
           {{ eventlog.totalDocs }}개의 이벤트 로그가 있습니다
         </span>
       </div>
+      <div>
+        <q-btn
+          class="q-mx-md"
+          round
+          flat
+          color="green-8"
+          icon="svguse:icons.svg#plus-circle-fill"
+          @click="fnAdd"
+        />
+      </div>
     </div>
     <div class="row justify-evenly">
       <Parents class="q-mt-md" />
@@ -24,26 +34,24 @@ import { ref, onMounted, onBeforeMount, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 
+import Add from '@/components/dialog/devices/add'
 import Parents from '@/components/devices/parents'
 import Childrens from '@/components/devices/childrens'
 
 export default {
   components: { Parents, Childrens },
   setup() {
-    const { state, commit, dispatch } = useStore()
+    const { state, dispatch } = useStore()
     const $q = useQuasar()
     const eventlog = computed(() => state.eventlog.eventlog)
     const searchKeyword = ref('')
 
-    async function fnSearch() {
-      $q.loading.show()
-      try {
-        commit('eventlog/updateSearch', searchKeyword.value)
-        dispatch('eventlog/getEventlogs')
-      } catch (e) {
-        console.error(e)
-      }
-      $q.loading.hide()
+    function fnAdd() {
+      $q.dialog({
+        component: Add
+      }).onOk(async () => {
+        dispatch('devices/getDevices')
+      })
     }
 
     onMounted(async () => {
@@ -77,7 +85,7 @@ export default {
     return {
       searchKeyword,
       eventlog,
-      fnSearch
+      fnAdd
     }
   }
 }

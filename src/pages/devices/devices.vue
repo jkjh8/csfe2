@@ -29,7 +29,7 @@
       </div>
     </div>
     <div class="q-mt-md">
-      <EventLog />
+      <DeviceTable />
     </div>
   </div>
 </template>
@@ -41,17 +41,16 @@ import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import notify from '@/api/notify'
 
-import EventLog from '@/components/devices/table'
+import DeviceTable from '@/components/devices/table'
 import Add from '@/components/dialog/devices/add'
 
 export default {
-  components: { EventLog },
+  components: { DeviceTable },
   setup() {
     const { state, getters, commit, dispatch } = useStore()
     const router = useRouter()
     const $q = useQuasar()
     const { notifyError } = notify()
-    const eventlog = computed(() => state.eventlog.eventlog)
     const searchKeyword = computed({
       get() {
         return state.devices.search
@@ -93,7 +92,6 @@ export default {
 
     return {
       searchKeyword,
-      eventlog,
       deviceCount,
       deviceError,
       fnAdd

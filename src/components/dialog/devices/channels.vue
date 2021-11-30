@@ -42,6 +42,7 @@
                 <q-select
                   v-model="channels[index]"
                   dense
+                  filled
                   clearable
                   :options="childrens"
                   option-value="_id"

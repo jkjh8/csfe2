@@ -269,8 +269,10 @@ export default {
       $q.loading.show()
       try {
         if (item.mode === 'Slave') {
+          const parent = item.parent._id ?? item.parent
+          console.log(parent)
           r = await api.get(
-            `/api/devices/checkChannel?parent=${item.parent._id}&child=${item._id}&channel=${item.channel}`
+            `/api/devices/checkChannel?parent=${parent}&child=${item._id}&channel=${item.channel}`
           )
           if (r.data) {
             $q.loading.hide()

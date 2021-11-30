@@ -17,17 +17,19 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+    <Preview />
   </q-layout>
 </template>
 
 <script>
 import Links from '@/components/layout/link'
 import UserState from '@/components/layout/userState'
-import { defineComponent, ref } from 'vue'
+import Preview from '@/components/dialog/preview'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'MainLayout',
-  components: { Links, UserState },
+  components: { Links, UserState, Preview },
   setup() {
     return {
       //

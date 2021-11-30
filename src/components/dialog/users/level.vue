@@ -1,7 +1,7 @@
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide">
     <q-card class="q-dialog-plugin">
-      <q-card-section class="bg-grey-1">
+      <q-card-section class="bg-grey-2">
         <div class="row items-center q-gutter-md">
           <q-avatar size="md">
             <q-icon
@@ -21,7 +21,13 @@
               사용자: <strong>{{ user.email }}</strong>
             </div>
             <div class="q-mt-md">
-              <q-input v-model="level" dense filled type="number" level />
+              <q-input
+                v-model="level"
+                dense
+                filled
+                type="number"
+                level
+              />
             </div>
           </div>
         </div>
@@ -29,7 +35,12 @@
 
       <q-card-actions class="bg-grey-1" align="right">
         <div class="q-mx-sm q-gutter-sm">
-          <q-btn label="취소" rounded unelevated @click="onCancelClick" />
+          <q-btn
+            label="취소"
+            rounded
+            unelevated
+            @click="onCancelClick"
+          />
           <q-btn
             color="negative"
             label="확인"

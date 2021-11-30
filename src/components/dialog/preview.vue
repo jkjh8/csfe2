@@ -1,18 +1,12 @@
 <template>
   <q-dialog
-    ref="dialogRef"
-    @hide="onDialogHide"
+    v-model="dialog"
     seamless
     transition-hide="fade"
     transition-show="fade"
   >
     <q-card class="q-dialog-plugin local-card">
-      <q-btn
-        class="close"
-        round
-        icon="close"
-        @click="onCancelClick"
-      />
+      <q-btn class="close" round icon="close" v-close-popup />
       <q-card-section
         class="q-pa-none"
         style="overflow: hidden; border-radius: 0.5rem 0.5rem 0 0"
@@ -49,35 +43,33 @@
 
 <script>
 import { ref, computed, onBeforeMount } from 'vue'
-import { useDialogPluginComponent } from 'quasar'
+import { useStore } from 'vuex'
 
 export default {
-  props: {
-    item: Object,
-    message: String,
-    file: Object,
-    user: Object
-  },
-
-  emits: [...useDialogPluginComponent.emits],
-
-  setup(props) {
-    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
-      useDialogPluginComponent()
-
+  setup() {
+    const { state, commit } = useStore()
     const defaultPath = ref('')
+    const file = computed(() => state.preview.file)
+    const dialog = computed({
+      get() {
+        return state.preview.dialog
+      },
+      set(v) {
+        return commit('preview/updateDialog', v)
+      }
+    })
+
     const source = computed(() => {
-      return encodeURIComponent(
-        `${defaultPath.value}/${props.file.base}/${props.file.name}`
-      )
+      return `${defaultPath.value}/${
+        file.value.base
+      }/${encodeURIComponent(file.value.name)}`
     })
 
     const fnOnEnded = () => {
-      onDialogOK()
+      commit('preview/updateDailog', false)
     }
 
     onBeforeMount(() => {
-      console.log(props.file)
       if (process.env.DEV) {
         defaultPath.value = `http://${window.location.hostname}:3000/files`
       } else {
@@ -85,16 +77,10 @@ export default {
       }
     })
     return {
+      dialog,
+      file,
       source,
-      fnOnEnded,
-      dialogRef,
-      onDialogHide,
-
-      onOKClick(item) {
-        onDialogOK(item)
-      },
-
-      onCancelClick: onDialogCancel
+      fnOnEnded
     }
   }
 }

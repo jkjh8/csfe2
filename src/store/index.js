@@ -7,7 +7,7 @@ import users from './users'
 import eventlog from './eventlog'
 import systemlog from './systemlog'
 import devices from './devices'
-
+import preview from './preview'
 let Store
 
 export default store(function (/* { ssrContext } */) {
@@ -17,7 +17,8 @@ export default store(function (/* { ssrContext } */) {
       users,
       eventlog,
       systemlog,
-      devices
+      devices,
+      preview
     },
 
     // enable strict mode (adds overhead!)
