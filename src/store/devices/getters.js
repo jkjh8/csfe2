@@ -43,3 +43,17 @@ export function childrens(state) {
   }
   return childrens
 }
+
+export function actives(state) {
+  const actives = 0
+  if (state.devices.length) {
+    state.devices.forEach((device) => {
+      if (device.mode === 'Master') {
+        if (device.activeCount) {
+          actives += device.activeCount
+        }
+      }
+    })
+  }
+  return actives
+}

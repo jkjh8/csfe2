@@ -132,8 +132,9 @@
 <script>
 import { ref, computed, onBeforeMount, toRefs } from 'vue'
 import { useStore } from 'vuex'
-import { useDialogPluginComponent } from 'quasar'
+import { useDialogPluginComponent, useQuasar } from 'quasar'
 import { api } from '@/boot/axios'
+import Select from '@/components/dialog/devices/selectChild'
 
 export default {
   props: {
@@ -143,6 +144,7 @@ export default {
   emits: [...useDialogPluginComponent.emits],
 
   setup(props) {
+    const $q = useQuasar()
     const { item } = toRefs(props)
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
       useDialogPluginComponent()
@@ -152,7 +154,12 @@ export default {
     const error = ref('')
 
     const fnSelect = (idx) => {
-      console.log(idx)
+      $q.dialog({
+        component: Select
+      }).onOk(async (rt) => {
+        console.log(idx, rt)
+        channels.value[idx] = rt
+      })
     }
 
     onBeforeMount(() => {
@@ -180,18 +187,6 @@ export default {
         return true
       }
     }
-
-    // const fnCheck = async (v) => {
-    //   if (!v) return true
-    //   const r = await api.post('/api/devices/checkChild', {
-    //     parent: item._id,
-    //     channels: channels.value
-    //   })
-    //   if (r.data && r.data.length > 1) {
-    //     return false
-    //   }
-    //   return true
-    // }
 
     const onOKClick = async () => {
       const filterdChannel = channels.value.filter((e) => e != null)

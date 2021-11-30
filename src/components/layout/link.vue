@@ -9,9 +9,15 @@
         :offset="[130, 5]"
       >
         <div class="q-pa-sm">
-          <router-link class="link" to="">방송상태</router-link>
-          <router-link class="link" to="">실시간방송</router-link>
-          <router-link class="link" to="">예약방송</router-link>
+          <router-link class="link" to="/broadcast/status"
+            >방송상태</router-link
+          >
+          <router-link class="link" to="/broadcast/live"
+            >실시간방송</router-link
+          >
+          <router-link class="link" to="/broadcast/schedules"
+            >예약방송</router-link
+          >
         </div>
       </q-menu>
     </button>

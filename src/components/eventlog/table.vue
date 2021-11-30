@@ -46,7 +46,11 @@
             v-for="col in props.cols"
             :key="col.name"
             :props="props"
-            style="font-family: 나눔고딕; font-weight: bold"
+            style="
+              max-width: 400px;
+              font-family: 나눔고딕;
+              font-weight: bold;
+            "
           >
             {{ col.label }}
           </q-th>
@@ -115,8 +119,14 @@
             </div>
           </q-td>
 
-          <q-td key="message" :props="props">
-            <div class="hiddenText">
+          <q-td key="message" :props="props" style="max-width: 400px">
+            <div
+              style="
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+            >
               {{ props.row.message }}
             </div>
             <q-tooltip

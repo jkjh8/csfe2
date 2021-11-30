@@ -86,6 +86,25 @@ const routes = [
     ]
   },
 
+  {
+    path: '/broadcast',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: 'status',
+        component: () => import('src/pages/broadcast/status.vue')
+      },
+      {
+        path: 'live',
+        component: () => import('src/pages/broadcast/live.vue')
+      },
+      {
+        path: 'schedules',
+        component: () => import('src/pages/broadcast/schedules.vue')
+      }
+    ]
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {

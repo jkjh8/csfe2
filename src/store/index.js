@@ -8,6 +8,7 @@ import eventlog from './eventlog'
 import systemlog from './systemlog'
 import devices from './devices'
 import preview from './preview'
+import schedules from './schedules'
 let Store
 
 export default store(function (/* { ssrContext } */) {
@@ -18,7 +19,8 @@ export default store(function (/* { ssrContext } */) {
       eventlog,
       systemlog,
       devices,
-      preview
+      preview,
+      schedules
     },
 
     // enable strict mode (adds overhead!)
