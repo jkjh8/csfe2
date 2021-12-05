@@ -13,6 +13,7 @@
     </div>
     <div class="q-mt-md">
       <!-- component -->
+      <Status />
     </div>
   </div>
 </template>
@@ -24,7 +25,10 @@ import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import notify from '@/api/notify'
 
+import Status from '@/components/broadcast/status'
+
 export default {
+  components: { Status },
   setup() {
     const { state, getters, dispatch } = useStore()
     const router = useRouter()
