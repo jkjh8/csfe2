@@ -36,6 +36,8 @@
     </div>
     <div class="q-mt-md">
       <!-- component -->
+      <Table v-if="viewMode === 'list'" />
+      <Calendar v-else />
     </div>
   </div>
 </template>
@@ -47,7 +49,11 @@ import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import notify from '@/api/notify'
 
+import Table from '@/components/broadcast/scheduleTable'
+import Calendar from '@/components/broadcast/scheduleCalendar'
+
 export default {
+  components: { Table, Calendar },
   setup() {
     const { state, getters, dispatch } = useStore()
     const router = useRouter()
