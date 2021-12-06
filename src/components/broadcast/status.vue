@@ -183,6 +183,7 @@ export default {
         component: Volume,
         componentProps: { device: device, item: item }
       }).onOk(async (rt) => {
+        $q.loading.show()
         try {
           const r = await api.put('/api/devices/volume', rt)
           if (r.data.status) {
