@@ -13,8 +13,9 @@
         </span>
       </div>
     </div>
-    <div class="q-mt-md">
+    <div class="q-mt-md row justify-center">
       <!-- component -->
+      <Live />
     </div>
   </div>
 </template>
@@ -26,7 +27,10 @@ import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import notify from '@/api/notify'
 
+import Live from '@/components/broadcast/live'
+
 export default {
+  components: { Live },
   setup() {
     const { state, getters, dispatch } = useStore()
     const router = useRouter()

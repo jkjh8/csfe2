@@ -16,7 +16,7 @@
               <!--  헤더 -->
               <template #header>
                 <q-item-section avatar>
-                  <q-avatar>
+                  <q-avatar size="sm">
                     <q-icon
                       :name="
                         device.status
@@ -33,10 +33,7 @@
                   </q-avatar>
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label
-                    class="name"
-                    style="font-size: 1.2rem"
-                  >
+                  <q-item-label class="name" style="font-size: 1rem">
                     {{ device.name }}
                   </q-item-label>
                 </q-item-section>
@@ -45,6 +42,7 @@
                     <q-btn
                       round
                       flat
+                      size="sm"
                       icon="svguse:icons.svg#refresh"
                       @click.prevent.stop="fnRefresh(device)"
                     />
@@ -61,9 +59,10 @@
                       ? 'bg-yellow-2'
                       : ''
                   "
+                  dense
                 >
                   <q-item-section avatar>
-                    <q-avatar>
+                    <q-avatar size="sm">
                       <q-icon
                         name="svguse:icons.svg#server-fill"
                         :color="item.status ? 'blue-8' : 'grey'"
@@ -77,12 +76,12 @@
                     </q-avatar>
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>
+                    <q-item-label style="font-size: 0.8rem">
                       {{ item.name }}
                     </q-item-label>
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>
+                    <q-item-label style="font-size: 0.8rem">
                       {{
                         device.active[item.channel - 1]
                           ? '방송중'
@@ -98,12 +97,13 @@
                           flat
                           no-caps
                           no-wrap
+                          size="sm"
                           @click.prevent.stop="fnVolume(device, item)"
                         >
                           <div class="row justify-start items-center">
                             <q-icon
                               name="svguse:icons.svg#volume-tri"
-                              size="md"
+                              size="sm"
                               color="blue-4"
                             />
                             <div>
@@ -117,6 +117,7 @@
                         <q-btn
                           round
                           flat
+                          size="sm"
                           :icon="
                             device.mute[item.channel - 1]
                               ? 'svguse:icons.svg#volume-off'
