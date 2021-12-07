@@ -91,8 +91,14 @@ export default {
       const sel = []
       devices.value.forEach((zone) => {
         if (zones.includes(zone._id) && zone.mode === 'Master') {
-          delete zone.children
-          sel.push({ ...zone })
+          sel.push({
+            _id: zone._id,
+            name: zone.name,
+            ipaddress: zone.ipaddress,
+            all: true,
+            children: [],
+            channels: [1]
+          })
         } else {
           const children = []
           const channels = []

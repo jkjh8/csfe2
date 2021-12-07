@@ -21,19 +21,23 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import Live from '@/components/broadcast/live'
 
 export default {
   components: { Live },
   setup() {
-    const { state, getters } = useStore()
+    const { state, getters, dispatch } = useStore()
 
     const user = computed(() => state.user.user)
     const deviceCount = computed(() => getters['devices/deviceCount'])
     const deviceError = computed(() => getters['devices/error'])
     const activeCount = computed(() => getters['devices/actives'])
+
+    onMounted(() => {
+      dispatch('devices/getDevices')
+    })
 
     return {
       user,
