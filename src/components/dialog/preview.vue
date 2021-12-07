@@ -5,15 +5,54 @@
     transition-hide="fade"
     transition-show="fade"
   >
-    <q-card class="q-dialog-plugin local-card">
-      <q-btn class="close" round icon="close" v-close-popup />
+    <q-card
+      :class="changeSize ? 'local-card' : ''"
+      :style="changeSize ? '' : 'width: 660px; max-width: 800px;'"
+    >
+      <q-btn
+        v-if="changeSize"
+        class="close"
+        round
+        icon="close"
+        v-close-popup
+      />
       <q-card-section
         class="q-pa-none"
         style="overflow: hidden; border-radius: 0.5rem 0.5rem 0 0"
       >
-        <div class="gradient-red text-white">
-          <div class="q-pa-md">
+        <div
+          class="
+            gradient-red
+            text-white
+            row
+            justify-between
+            items-center
+            q-px-sm
+          "
+        >
+          <div
+            class="q-pa-md cursor-pointer"
+            @click="changeSize = !changeSize"
+          >
             {{ file.name }}
+          </div>
+          <div>
+            <q-btn
+              v-if="!changeSize"
+              round
+              flat
+              size="sm"
+              icon="photo_size_select_small"
+              @click="changeSize = !changeSize"
+            />
+            <q-btn
+              v-if="!changeSize"
+              round
+              flat
+              size="sm"
+              icon="close"
+              v-close-popup
+            />
           </div>
         </div>
       </q-card-section>
@@ -30,7 +69,7 @@
         <video
           v-else
           class="q-ma-sm"
-          width="360"
+          :width="changeSize ? '360' : '640'"
           controls
           autoplay
           :src="source"
@@ -48,6 +87,7 @@ import { useStore } from 'vuex'
 export default {
   setup() {
     const { state, commit } = useStore()
+    const changeSize = ref(true)
     const defaultPath = ref('')
     const file = computed(() => state.preview.file)
     const dialog = computed({
@@ -77,6 +117,7 @@ export default {
       }
     })
     return {
+      changeSize,
       dialog,
       file,
       source,

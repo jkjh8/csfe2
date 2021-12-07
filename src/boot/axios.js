@@ -1,6 +1,6 @@
 import { boot } from 'quasar/wrappers'
 import axios from 'axios'
-import vuecookie from 'vue-cookie'
+import { Cookies, LocalStorage } from 'quasar'
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -23,8 +23,8 @@ api.defaults.withCredentials = true
 export default boot(({ app, router, store }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
   function deleteToken() {
-    vuecookie.delete('token')
-    localStorage.removeItem('refresh')
+    Cookies.remove('token')
+    LocalStorage.removeItem('refresh')
     router.push('/')
     store.commit('user/updateUser', null)
   }
@@ -32,7 +32,7 @@ export default boot(({ app, router, store }) => {
   api.interceptors.request.use(
     function (config) {
       if (!config.headers.Authorization) {
-        const token = vuecookie.get('token')
+        const token = Cookies.get('token')
         config.headers.Authorization = `Bearer ${token}`
       }
       return config
@@ -48,7 +48,7 @@ export default boot(({ app, router, store }) => {
     async function (error) {
       try {
         const original = error.config
-        const refreshtoken = localStorage.getItem('refresh')
+        const refreshtoken = LocalStorage.getItem('refresh')
         if (error.response.status === 401) {
           if (original.url === 'api/auth/refresh') {
             deleteToken()
@@ -67,8 +67,8 @@ export default boot(({ app, router, store }) => {
                 if (res.status === 200) {
                   if (res.data.token) {
                     tokens = res.data.token
-                    vuecookie.set('token', tokens.access)
-                    localStorage.setItem('refresh', tokens.refresh)
+                    Cookies.set('token', tokens.access)
+                    LocalStorage.set('refresh', tokens.refresh)
                   }
                   if (tokens && tokens.access) {
                     original.headers.Authorization = `Bearer ${tokens.access}`
