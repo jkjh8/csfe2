@@ -11,13 +11,17 @@
             size="sm"
             color="primary"
           />
-          <div class="name" style="font-size: 1.2rem">
-            실시간 방송
-          </div>
+          <div class="name" style="font-size: 1.2rem">파일선택</div>
         </div>
 
         <div>
-          <q-btn rounded flat label="초기화" color="primary" />
+          <q-btn
+            rounded
+            flat
+            label="초기화"
+            color="primary"
+            @click="fnReset"
+          />
         </div>
       </div>
     </q-card-section>
@@ -45,6 +49,7 @@
             unelevated
             class="full-width"
             label="방송구간선택"
+            @click="fnZoneSel"
           />
         </div>
 
@@ -73,6 +78,7 @@
             color="primary"
             unelevated
             label="파일선택"
+            @click="fnFileSel"
           />
           <q-btn
             v-else
@@ -129,14 +135,21 @@
 </template>
 
 <script>
-import { ref, reactive, toRefs } from 'vue'
+import { computed, reactive, toRefs } from 'vue'
+import { useStore } from 'vuex'
+import { useQuasar } from 'quasar'
+
 import ZoneSel from '@/components/broadcast/zoneSel'
 import FileSel from '@/components/broadcast/fileSel'
+import dlZoneSel from '@/components/dialog/broadcast/zoneSel'
+import dlFileSel from '@/components/dialog/broadcast/fileSel'
 
 export default {
   components: { ZoneSel, FileSel },
   setup() {
-    const error = ref('')
+    const { state } = useStore()
+    const $q = useQuasar()
+    const devices = computed(() => state.devices.devices)
     const live = reactive({
       name: '',
       nodes: [],
@@ -147,8 +160,39 @@ export default {
       startChime: false
     })
 
+    const fnReset = () => {
+      ;(live.name = ''),
+        (live.nodes = []),
+        (live.selected = []),
+        (live.file = null),
+        (live.mode = 'Media'),
+        (live.volume = 70)
+      live.startChime = false
+    }
+
+    const fnZoneSel = () => {
+      $q.dialog({
+        component: dlZoneSel,
+        componentProps: { zones: live.selected }
+      }).onOk(async (rt) => {
+        live.nodes = rt.zones
+        live.selected = rt.selected
+      })
+    }
+
+    const fnFileSel = () => {
+      $q.dialog({
+        component: dlFileSel
+      }).onOk(async (rt) => {
+        console.log(rt)
+        live.file = rt
+      })
+    }
+
     return {
-      error,
+      fnReset,
+      fnZoneSel,
+      fnFileSel,
       ...toRefs(live)
     }
   }

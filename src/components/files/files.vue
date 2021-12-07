@@ -22,7 +22,7 @@
             Folder
           </div>
         </div>
-        <div class="q-ml-md row items-center q-gutter-xs">
+        <div class="q-ml-md row items-center q-gutter-x-xs">
           <span>/</span>
           <q-breadcrumbs
             class="q-mr-md"

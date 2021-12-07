@@ -13,7 +13,7 @@
         </span>
       </div>
     </div>
-    <div class="q-mt-md row justify-center">
+    <div class="q-mt-xl row justify-center">
       <!-- component -->
       <Live />
     </div>
