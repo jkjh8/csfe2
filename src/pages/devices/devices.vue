@@ -37,9 +37,7 @@
 <script>
 import { onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
-import notify from '@/api/notify'
 
 import DeviceTable from '@/components/devices/table'
 import Add from '@/components/dialog/devices/add'
@@ -48,9 +46,7 @@ export default {
   components: { DeviceTable },
   setup() {
     const { state, getters, commit, dispatch } = useStore()
-    const router = useRouter()
     const $q = useQuasar()
-    const { notifyError } = notify()
     const searchKeyword = computed({
       get() {
         return state.devices.search
@@ -72,16 +68,6 @@ export default {
 
     onMounted(async () => {
       $q.loading.show()
-      try {
-        await dispatch('user/login')
-      } catch (err) {
-        $q.loading.hide()
-        notifyError({
-          message: '사용자 로그인이 필요합니다',
-          caption: '로그인 페이지로 이동해서 로그인후 이용하세요.'
-        })
-        router.push('/')
-      }
       try {
         await dispatch('devices/getDevices')
       } catch (e) {

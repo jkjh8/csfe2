@@ -40,35 +40,12 @@ export default defineComponent({
   name: 'PageIndex',
   components: { NeedLogin, Status },
   setup() {
-    const { state, getters, dispatch } = useStore()
-    const router = useRouter()
-    const $q = useQuasar()
-    const { notifyError } = notify()
+    const { state, getters } = useStore()
 
     const user = computed(() => state.user.user)
     const deviceCount = computed(() => getters['devices/deviceCount'])
     const deviceError = computed(() => getters['devices/error'])
     const activeCount = computed(() => getters['devices/actives'])
-
-    onMounted(async () => {
-      $q.loading.show()
-      try {
-        await dispatch('user/login')
-      } catch (err) {
-        $q.loading.hide()
-        notifyError({
-          message: '사용자 로그인이 필요합니다',
-          caption: '로그인 페이지로 이동해서 로그인후 이용하세요.'
-        })
-        router.push('/')
-      }
-      try {
-        await dispatch('devices/getDevices')
-      } catch (e) {
-        console.error(e)
-      }
-      $q.loading.hide()
-    })
 
     return {
       user,
