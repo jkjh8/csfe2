@@ -9,6 +9,8 @@ import systemlog from './systemlog'
 import devices from './devices'
 import preview from './preview'
 import schedules from './schedules'
+import tts from './tts'
+
 let Store
 
 export default store(function (/* { ssrContext } */) {
@@ -20,7 +22,8 @@ export default store(function (/* { ssrContext } */) {
       systemlog,
       devices,
       preview,
-      schedules
+      schedules,
+      tts
     },
 
     // enable strict mode (adds overhead!)

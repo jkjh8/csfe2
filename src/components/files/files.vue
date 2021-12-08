@@ -145,6 +145,15 @@
               <q-td :props="props" key="actions">
                 <div>
                   <q-btn
+                    v-if="props.row.type !== 'directory'"
+                    round
+                    flat
+                    icon="svguse:icons.svg#save"
+                    size="sm"
+                    color="grey"
+                    @click.prevent.stop="fnDownload(props.row)"
+                  />
+                  <q-btn
                     v-if="
                       props.row.type === 'audio' ||
                       props.row.type === 'video'
@@ -249,6 +258,11 @@ export default {
       })
     }
 
+    const fnDownload = async (file) => {
+      const r = await api.post('/api/files/download', file)
+      console.log(r)
+    }
+
     function fnDelete(item) {
       $q.dialog({
         component: Delete,
@@ -287,6 +301,7 @@ export default {
       fnCreateFolder,
       fnFileUpload,
       fnDelete,
+      fnDownload,
       folders,
       files,
       humanStorageSize

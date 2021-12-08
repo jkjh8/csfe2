@@ -87,6 +87,7 @@
             color="primary"
             unelevated
             label="TTS생성"
+            @click="fnTTSCreate"
           />
         </div>
 
@@ -127,6 +128,7 @@
             unelevated
             color="yellow-10"
             label="방송시작"
+            @click="fnOnair"
           />
         </div>
       </div>
@@ -135,21 +137,21 @@
 </template>
 
 <script>
-import { computed, reactive, toRefs } from 'vue'
-import { useStore } from 'vuex'
+import { reactive, toRefs } from 'vue'
 import { useQuasar } from 'quasar'
+import notify from '@/api/notify'
 
 import ZoneSel from '@/components/broadcast/zoneSel'
 import FileSel from '@/components/broadcast/fileSel'
 import dlZoneSel from '@/components/dialog/broadcast/zoneSel'
 import dlFileSel from '@/components/dialog/broadcast/fileSel'
+import dlTTS from '@/components/dialog/broadcast/ttsCreate'
 
 export default {
   components: { ZoneSel, FileSel },
   setup() {
-    const { state } = useStore()
     const $q = useQuasar()
-    const devices = computed(() => state.devices.devices)
+    const { notifyError } = notify()
     const live = reactive({
       name: '',
       nodes: [],
@@ -189,10 +191,36 @@ export default {
       })
     }
 
+    const fnTTSCreate = () => {
+      $q.dialog({
+        component: dlTTS
+      }).onOk(async (rt) => {
+        console.log(rt)
+      })
+    }
+
+    const fnOnair = () => {
+      if (!live.name) {
+        return notifyError({
+          message: '이름을 입력해주세요'
+        })
+      }
+
+      if (!live.selected.length) {
+        return notifyError({ message: '방송구간을 선택해주세요' })
+      }
+
+      if (!live.file) {
+        return notifyError({ message: '미디어 파일을 선택해주세요' })
+      }
+    }
+
     return {
       fnReset,
       fnZoneSel,
       fnFileSel,
+      fnTTSCreate,
+      fnOnair,
       ...toRefs(live)
     }
   }

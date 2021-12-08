@@ -18,7 +18,7 @@
       />
       <q-card-section
         class="q-pa-none"
-        style="overflow: hidden; border-radius: 0.5rem 0.5rem 0 0"
+        style="overflow: hidden; border-radius: 0.2rem 0.2rem 0 0"
       >
         <div
           class="
@@ -131,7 +131,6 @@ export default {
 .local-card {
   position: absolute;
   width: 380px;
-  border-radius: 0.5rem;
   bottom: 1rem;
   right: 1rem;
   overflow: visible;
