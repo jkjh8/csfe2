@@ -106,7 +106,7 @@ export default {
     })
 
     const fnOnEnded = () => {
-      commit('preview/updateDailog', false)
+      commit('preview/updateDialog', false)
     }
 
     onBeforeMount(() => {

@@ -9,7 +9,7 @@
               color="primary"
               size="sm"
             />
-            <div class="name" style="font-size: 1.2rem">파일선택</div>
+            <div class="name" style="font-size: 1.2rem">TTS 합성</div>
           </div>
 
           <div>
@@ -47,7 +47,7 @@
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section avatar>
-                    <q-icon name="svguse:iconsColor.svg#mic" />
+                    <q-icon name="svguse:icons.svg#mic-fill" />
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>
@@ -78,34 +78,49 @@
 
           <div>
             <q-input
-              v-model="text"
+              v-model="message"
               filled
               type="textarea"
               label="메시지"
             />
           </div>
-        </div>
 
-        <div class="q-mx-md q-gutter-sm q-mt-md row justify-between">
-          <q-btn
-            rounded
-            unelevated
-            color="grey-3"
-            text-color="grey-10"
-          >
-            <q-icon name="svguse:icons.svg#mic-fill" size="sm" />
-            <span class="q-ml-sm">미리듣기</span>
-          </q-btn>
+          <div class="q-gutter-y-sm">
+            <FolderSel :file="file" />
+            <q-btn
+              class="full-width"
+              rounded
+              color="primary"
+              unelevated
+              label="폴더선택"
+              @click="fnFolderSel"
+            />
+          </div>
 
-          <q-btn
-            rounded
-            unelevated
-            color="cyan-1"
-            text-color="grey-10"
+          <div
+            class="q-mx-md q-gutter-sm q-mt-md row justify-between"
           >
-            <q-icon name="svguse:icons.svg#archive" size="sm" />
-            <span class="q-ml-sm">저장하기</span>
-          </q-btn>
+            <q-btn
+              rounded
+              unelevated
+              color="grey-3"
+              text-color="grey-10"
+              @click="fnTTSPreview"
+            >
+              <q-icon name="svguse:icons.svg#mic-fill" size="sm" />
+              <span class="q-ml-sm">미리듣기</span>
+            </q-btn>
+
+            <q-btn
+              rounded
+              unelevated
+              color="cyan-1"
+              text-color="grey-10"
+            >
+              <q-icon name="svguse:icons.svg#archive" size="sm" />
+              <span class="q-ml-sm">저장하기</span>
+            </q-btn>
+          </div>
         </div>
       </q-card-section>
 
@@ -136,22 +151,28 @@
 import { useQuasar, useDialogPluginComponent } from 'quasar'
 import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
+import notify from '@/api/notify'
 import { api } from '@/boot/axios'
+
+import FolderSel from '@/components/broadcast/folderSel'
+import dlFileSel from '@/components/dialog/broadcast/fileSel'
 
 export default {
   emits: [...useDialogPluginComponent.emits],
-
+  components: { FolderSel },
   setup() {
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
       useDialogPluginComponent()
     const { state, commit, dispatch } = useStore()
     const $q = useQuasar()
+    const { notifyError } = notify()
 
     const user = computed(() => state.user.user)
     const voices = computed(() => state.tts.voices)
     const name = ref('')
-    const text = ref('')
+    const message = ref('')
     const file = ref(null)
+    const tree = ref([])
     const voice = computed({
       get() {
         return state.tts.voice
@@ -172,12 +193,43 @@ export default {
     const fnReset = () => {
       name.value = ''
       file.value = null
-      text.value = ''
+      message.value = ''
+    }
+
+    const fnTTSPreview = async () => {
+      if (!voice.value) {
+        return notifyError({ message: '음성을 선택해주세요' })
+      }
+      if (!message.value) {
+        return notifyError({ message: '메시지를 입력해주세요' })
+      }
+
+      const r = await api.post('/api/tts/preview', {
+        name: name.value,
+        voice: voice.value,
+        rate: rate.value,
+        message: message.value
+      })
+      dispatch('preview/openPreview', r.data)
+    }
+
+    const fnFilter = (node, filter) => {
+      return node.type === filter
+    }
+
+    const fnFolderSel = () => {
+      $q.dialog({
+        component: dlFileSel
+      }).onOk(async (rt) => {
+        console.log(rt)
+      })
     }
 
     onMounted(async () => {
       $q.loading.show()
       try {
+        const filetree = await api.get('/api/files/getTree')
+        tree.value = [filetree.data]
         const r = await api.get('/api/tts')
         console.log(r.data)
         dispatch('tts/updateInfo', r.data)
@@ -192,9 +244,13 @@ export default {
       voices,
       voice,
       rate,
-      text,
+      message,
       file,
+      tree,
       fnReset,
+      fnTTSPreview,
+      fnFilter,
+      fnFolderSel,
       dialogRef,
       onDialogHide,
       onOKClick(item) {

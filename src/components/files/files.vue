@@ -259,17 +259,24 @@ export default {
     }
 
     const fnDownload = async (file) => {
+      $q.loading.show()
       api
         .post('/api/files/download', file, { responseType: 'blob' })
-        .then((r) => {
-          let filename =
-            r.headers['content-disposition'].split('filename=')[1]
-          let blob = new Blob([r.data])
-          window.saveAs(blob, filename)
+        .then((response) => {
+          const fileURL = window.URL.createObjectURL(
+            new Blob([response.data])
+          )
+          const fileLink = document.createElement('a')
+          fileLink.href = fileURL
+          fileLink.setAttribute('download', file.name)
+          document.body.appendChild(fileLink)
+          fileLink.click()
         })
         .catch((err) => {
-          console.error(err)
+          $q.loading.hide()
+          console.error(err.message)
         })
+      $q.loading.hide()
     }
 
     function fnDelete(item) {

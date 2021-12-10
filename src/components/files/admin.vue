@@ -149,6 +149,15 @@
               <q-td :props="props" key="actions">
                 <div>
                   <q-btn
+                    v-if="props.row.type !== 'directory'"
+                    round
+                    flat
+                    icon="svguse:icons.svg#save"
+                    size="sm"
+                    color="grey"
+                    @click.prevent.stop="fnDownload(props.row)"
+                  />
+                  <q-btn
                     v-if="
                       props.row.type === 'audio' ||
                       props.row.type === 'video'
@@ -280,6 +289,27 @@ export default {
       })
     }
 
+    const fnDownload = async (file) => {
+      $q.loading.show()
+      api
+        .post('/api/files/download', file, { responseType: 'blob' })
+        .then((response) => {
+          const fileURL = window.URL.createObjectURL(
+            new Blob([response.data])
+          )
+          const fileLink = document.createElement('a')
+          fileLink.href = fileURL
+          fileLink.setAttribute('download', file.name)
+          document.body.appendChild(fileLink)
+          fileLink.click()
+        })
+        .catch((err) => {
+          $q.loading.hide()
+          console.error(err.message)
+        })
+      $q.loading.hide()
+    }
+
     onMounted(async () => {
       await fnUpdateFolder()
     })
@@ -293,6 +323,7 @@ export default {
       fnCreateFolder,
       fnFileUpload,
       fnDelete,
+      fnDownload,
       folders,
       files,
       humanStorageSize
