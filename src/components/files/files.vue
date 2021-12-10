@@ -259,8 +259,17 @@ export default {
     }
 
     const fnDownload = async (file) => {
-      const r = await api.post('/api/files/download', file)
-      console.log(r)
+      api
+        .post('/api/files/download', file, { responseType: 'blob' })
+        .then((r) => {
+          let filename =
+            r.headers['content-disposition'].split('filename=')[1]
+          let blob = new Blob([r.data])
+          window.saveAs(blob, filename)
+        })
+        .catch((err) => {
+          console.error(err)
+        })
     }
 
     function fnDelete(item) {
