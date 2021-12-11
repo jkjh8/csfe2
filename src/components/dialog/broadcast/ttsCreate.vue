@@ -86,7 +86,7 @@
           </div>
 
           <div class="q-gutter-y-sm">
-            <FolderSel :file="file" />
+            <FolderSel :folder="folder" />
             <q-btn
               class="full-width"
               rounded
@@ -134,12 +134,12 @@
             @click="onCancelClick"
           />
           <q-btn
-            :disabled="!file"
+            :disabled="!folder"
             color="primary"
             label="확인"
             unelevated
             rounded
-            @click="onOKClick(file)"
+            @click="onOKClick(folder)"
           />
         </div>
       </q-card-actions>
@@ -154,8 +154,8 @@ import { useStore } from 'vuex'
 import notify from '@/api/notify'
 import { api } from '@/boot/axios'
 
-import FolderSel from '@/components/broadcast/folderSel'
-import dlFileSel from '@/components/dialog/broadcast/fileSel'
+import FolderSel from '@/components/files/folderSel'
+import dlFolderSel from '@/components/dialog/files/folderSel'
 
 export default {
   emits: [...useDialogPluginComponent.emits],
@@ -171,7 +171,7 @@ export default {
     const voices = computed(() => state.tts.voices)
     const name = ref('')
     const message = ref('')
-    const file = ref(null)
+    const folder = ref(null)
     const tree = ref([])
     const voice = computed({
       get() {
@@ -192,7 +192,7 @@ export default {
 
     const fnReset = () => {
       name.value = ''
-      file.value = null
+      folder.value = null
       message.value = ''
     }
 
@@ -219,9 +219,10 @@ export default {
 
     const fnFolderSel = () => {
       $q.dialog({
-        component: dlFileSel
+        component: dlFolderSel
       }).onOk(async (rt) => {
         console.log(rt)
+        folder.value = rt
       })
     }
 
@@ -245,7 +246,7 @@ export default {
       voice,
       rate,
       message,
-      file,
+      folder,
       tree,
       fnReset,
       fnTTSPreview,

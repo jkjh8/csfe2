@@ -1,6 +1,9 @@
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide">
-    <q-card class="q-dialog-plugin" style="border-radius: 0.5rem">
+    <q-card
+      class="q-dialog-plugin"
+      style="border-radius: 0.5rem; width: 600px; max-width: 800px"
+    >
       <q-card-section class="bg-grey-2">
         <div class="row justify-between items-center">
           <div class="q-gutter-x-sm q-px-md row items-end">
@@ -9,82 +12,64 @@
               color="primary"
               size="sm"
             />
-            <div class="name" style="font-size: 1.2rem">파일선택</div>
-          </div>
-
-          <div class="q-ml-md row items-center q-gutter-x-xs">
-            <span>/</span>
-            <q-breadcrumbs
-              class="q-mr-md cursor-pointer"
-              gutter="xs"
-              active-color="blue"
-            >
-              <q-breadcrumbs-el
-                class="cursor-pointer text-blue-10"
-                v-for="(folder, index) in folders"
-                :key="index"
-                :label="folder.toUpperCase()"
-                @click="fnMoveFolder(index + 1)"
-              />
-            </q-breadcrumbs>
+            <div class="name" style="font-size: 1.2rem">폴더선택</div>
           </div>
         </div>
       </q-card-section>
 
       <q-card-section>
-        <q-scroll-area style="height: 320px">
-          <q-list class="q-py-md">
-            <q-item
-              v-for="file in files"
-              :key="file.idx"
-              dense
-              clickable
-              v-ripple
-              :active="selected === file"
-              @click="fnClickItem(file)"
-              active-class="selected"
-            >
-              <q-item-section avatar>
-                <q-icon
-                  v-if="file.type === 'directory'"
-                  name="svguse:icons.svg#folder-fill"
-                  color="yellow"
+        <q-table
+          dense
+          :columns="[
+            {
+              name: 'name',
+              label: 'Name',
+              field: 'name',
+              align: 'start',
+              sortable: true
+            }
+          ]"
+          :rows="files"
+          row-key="name"
+          selection="single"
+          v-model:selected="selected"
+        >
+          <template #top>
+            <div class="q-ml-md row items-center q-gutter-x-xs">
+              <span>/</span>
+              <q-breadcrumbs
+                class="q-mr-md cursor-pointer"
+                gutter="xs"
+                active-color="blue"
+              >
+                <q-breadcrumbs-el
+                  class="cursor-pointer text-blue-10"
+                  v-for="(folder, index) in folders"
+                  :key="index"
+                  :label="folder.toUpperCase()"
+                  @click="fnMoveFolder(index + 1)"
                 />
-                <q-icon
-                  v-else-if="file.type === 'video'"
-                  name="svguse:icons.svg#video-camera-fill"
-                  color="primary"
-                />
-                <q-icon
-                  v-else-if="file.type === 'audio'"
-                  name="svguse:icons.svg#music-note-fill"
-                  color="teal"
-                />
-                <q-icon
-                  v-else
-                  name="svguse:icons.svg#file"
-                  color="grey"
-                />
-              </q-item-section>
+              </q-breadcrumbs>
+            </div>
+          </template>
 
-              <q-item-section>
-                <q-item-label>{{ file.name }}</q-item-label>
-              </q-item-section>
+          <template v-slot:body-selection="scope">
+            <q-checkbox v-model="scope.selected" />
+          </template>
 
-              <q-item-section side>
-                <q-btn
-                  v-if="file.type !== 'directory'"
-                  round
-                  flat
-                  icon="svguse:icons.svg#play"
-                  color="green-7"
-                  size="sm"
-                  @click.prevent.stop="fnPreview(file)"
-                />
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-scroll-area>
+          <template #body-cell-name="props">
+            <q-td :props="props">
+              <div>
+                <span
+                  class="cursor-pointer"
+                  @click="fnClickItem(props.row)"
+                >
+                  {{ props.row.name }}
+                </span>
+              </div>
+            </q-td>
+          </template>
+        </q-table>
       </q-card-section>
 
       <q-card-actions class="bg-grey-1" align="right">
@@ -100,7 +85,7 @@
             label="확인"
             unelevated
             rounded
-            @click="onOKClick(selected)"
+            @click="onOKClick(selected[0])"
           />
         </div>
       </q-card-actions>
@@ -128,7 +113,7 @@ export default {
     const user = computed(() => state.user.user)
     const files = ref([])
     const folders = ref(['media'])
-    const selected = ref(null)
+    const selected = ref([])
 
     async function fnMoveFolder(idx) {
       if (idx === 0) {
@@ -142,7 +127,7 @@ export default {
     async function fnUpdateFolder() {
       $q.loading.show()
       try {
-        const r = await api.post('/api/files/get', {
+        const r = await api.post('/api/files/getFolder', {
           folder: folders.value
         })
         files.value = r.data.files.sort(function (a, b) {

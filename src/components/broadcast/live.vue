@@ -142,9 +142,9 @@ import { useQuasar } from 'quasar'
 import notify from '@/api/notify'
 
 import ZoneSel from '@/components/broadcast/zoneSel'
-import FileSel from '@/components/broadcast/fileSel'
+import FileSel from '@/components/files/fileSel'
 import dlZoneSel from '@/components/dialog/broadcast/zoneSel'
-import dlFileSel from '@/components/dialog/broadcast/fileSel'
+import dlFileSel from '@/components/dialog/files/fileSel'
 import dlTTS from '@/components/dialog/broadcast/ttsCreate'
 
 export default {
