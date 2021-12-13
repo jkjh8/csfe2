@@ -24,7 +24,7 @@ export default boot(({ app, router, store }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
   function deleteToken() {
     Cookies.remove('token')
-    LocalStorage.removeItem('refresh')
+    LocalStorage.remove('refresh')
     router.push('/')
     store.commit('user/updateUser', null)
   }
@@ -49,6 +49,7 @@ export default boot(({ app, router, store }) => {
       try {
         const original = error.config
         const refreshtoken = LocalStorage.getItem('refresh')
+        console.log(refreshtoken)
         if (error.response.status === 401) {
           if (original.url === 'api/auth/refresh') {
             deleteToken()

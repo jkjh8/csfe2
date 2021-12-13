@@ -41,6 +41,7 @@ export default defineComponent({
     const activeCount = computed(() => getters['devices/actives'])
 
     onMounted(() => {
+      dispatch('user/login')
       dispatch('devices/getDevices')
     })
 

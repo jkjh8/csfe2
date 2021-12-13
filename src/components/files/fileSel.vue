@@ -6,7 +6,7 @@
     <div class="listname">선택된 파일은</div>
 
     <div v-if="file">
-      <q-item>
+      <q-item dense>
         <q-item-section avatar>
           <div v-if="file.type === 'directory'">
             <q-icon

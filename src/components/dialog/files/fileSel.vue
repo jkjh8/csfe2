@@ -42,6 +42,7 @@
               v-ripple
               :active="selected === file"
               @click="fnClickItem(file)"
+              @dblclick="fnDbClickItem(file)"
               active-class="selected"
             >
               <q-item-section avatar>
@@ -166,6 +167,16 @@ export default {
       }
     }
 
+    const fnDbClickItem = async (item) => {
+      if (item.type === 'directory') {
+        folders.value.push(item.name)
+        await fnUpdateFolder()
+      } else {
+        selected.value = item
+        onDialogOK(item)
+      }
+    }
+
     const fnPreview = (file) => {
       dispatch('preview/openPreview', file)
     }
@@ -183,6 +194,7 @@ export default {
       fnMoveFolder,
       fnPreview,
       fnClickItem,
+      fnDbClickItem,
       dialogRef,
       onDialogHide,
       onOKClick(file) {
