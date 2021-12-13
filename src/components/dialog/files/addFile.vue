@@ -58,21 +58,73 @@
 
 <script>
 import { ref } from 'vue'
-import { useDialogPluginComponent } from 'quasar'
+import { useDialogPluginComponent, useQuasar } from 'quasar'
+import { api } from '@/boot/axios'
+import notify from '@/api/notify'
 
 export default {
   props: {
-    //
+    folders: Array
   },
 
   emits: [...useDialogPluginComponent.emits],
 
-  setup() {
+  setup(props) {
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
       useDialogPluginComponent()
+    const $q = useQuasar()
+    const { notifyError } = notify()
+
     const file = ref(null)
-    async function onOKClick() {
-      onDialogOK(file.value)
+    const onOKClick = async () => {
+      $q.loading.show()
+      // 파일확인
+      if (!file.value) {
+        $q.loading.hide()
+        return notifyError({
+          message: '선택된 파일이 없습니다',
+          caption: '업로드 할 파일을 먼저 선택 해주세요'
+        })
+      }
+      try {
+        // 중복 확인
+        await api.get(
+          `/api/files/check?folder=${encodeURIComponent(
+            props.folders.join('/')
+          )}&name=${encodeURIComponent(file.value.name)}`
+        )
+        // 업로드 데이터 생성
+        let formData = new FormData()
+        formData.append('file', file.value)
+        formData.append('folder', props.folders.join('/'))
+
+        // 파일 업로드
+        await api.post('/api/files/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          },
+          onUploadProgress: (progress) => {
+            console.log(
+              parseInt(
+                Math.round((progress.loaded / progress.total) * 100)
+              )
+            )
+          }
+        })
+        onDialogOK()
+      } catch (e) {
+        $q.loading.hide()
+        if (e.response.status == 409) {
+          return notifyError({
+            message: '파일 중복',
+            caption: '선택된 폴더에 동일한 이름의 파일이 존재합니다.'
+          })
+        } else {
+          console.error(e.response)
+        }
+      }
+
+      // onDialogOK(file.value)
     }
     return {
       file,

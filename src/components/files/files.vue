@@ -230,30 +230,10 @@ export default {
 
     function fnFileUpload() {
       $q.dialog({
-        component: addFile
-      }).onOk(async (file) => {
-        if (!file) return
-        $q.loading.show()
-        try {
-          let formData = new FormData()
-          formData.append('file', file)
-          formData.set('folder', folders.value.join('/'))
-          const r = await api.post('/api/files/upload', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            },
-            onUploadProgress: (progress) => {
-              console.log(
-                parseInt(
-                  Math.round((progress.loaded / progress.total) * 100)
-                )
-              )
-            }
-          })
-          await fnUpdateFolder()
-        } catch (err) {
-          console.error(err)
-        }
+        component: addFile,
+        componentProps: { folders: folders.value }
+      }).onOk(async () => {
+        await fnUpdateFolder()
         $q.loading.hide()
       })
     }
@@ -274,7 +254,7 @@ export default {
         })
         .catch((err) => {
           $q.loading.hide()
-          console.error(err.message)
+          console.error(err.response)
         })
       $q.loading.hide()
     }

@@ -21,15 +21,6 @@
         </div>
       </q-card-section>
 
-      <q-card-section v-if="error" class="q-px-lg">
-        <div
-          class="text-white text-center bg-red q-py-sm"
-          style="border-radius: 1rem"
-        >
-          {{ error }}
-        </div>
-      </q-card-section>
-
       <q-card-section>
         <div class="q-mx-md q-mt-lg">
           <div class="q-mt-md">
@@ -39,6 +30,7 @@
               dense
               filled
               label="폴더 이름"
+              @keyup.enter="onOKClick()"
             />
           </div>
         </div>
@@ -71,7 +63,7 @@
 import { ref } from 'vue'
 import { api } from '@/boot/axios'
 import { useDialogPluginComponent, useQuasar } from 'quasar'
-
+import notify from '@/api/notify'
 export default {
   props: {
     folders: Array
@@ -83,8 +75,8 @@ export default {
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
       useDialogPluginComponent()
     const $q = useQuasar()
+    const { notifyError } = notify()
 
-    const error = ref('')
     const name = ref('')
 
     async function onOKClick() {
@@ -99,13 +91,19 @@ export default {
         onDialogOK()
       } catch (err) {
         $q.loading.hide()
-        error.value = err.response.data.message
+        if (err.response.data.message === '중복 폴더') {
+          notifyError({
+            message: '폴더를 생성할 수 없습니다',
+            caption: '해당 폴더에 같은 이름의 폴더가 이미 존재합니다'
+          })
+        } else {
+          notifyError({ message: err.response.data.message })
+        }
       }
     }
 
     return {
       name,
-      error,
       dialogRef,
       onDialogHide,
       onOKClick,
