@@ -116,6 +116,7 @@
               unelevated
               color="cyan-1"
               text-color="grey-10"
+              @click="fnOnSave"
             >
               <q-icon name="svguse:icons.svg#archive" size="sm" />
               <span class="q-ml-sm">저장하기</span>
@@ -186,7 +187,7 @@ export default {
         return state.tts.rate
       },
       set(v) {
-        return commit('updateRate', v)
+        return commit('tts/updateRate', v)
       }
     })
 
@@ -198,10 +199,18 @@ export default {
 
     const fnTTSPreview = async () => {
       if (!voice.value) {
-        return notifyError({ message: '음성을 선택해주세요' })
+        return notifyError({
+          message: '음성을 선택해주세요',
+          caption:
+            'TTS(Text to Speech) 음성 합성을 위해서 음성(언어)을 선택해주세요'
+        })
       }
       if (!message.value) {
-        return notifyError({ message: '메시지를 입력해주세요' })
+        return notifyError({
+          message: '메시지를 입력해주세요',
+          cation:
+            'TTS(Text to Speech) 음성 합성할 메시지를 입력해주세요'
+        })
       }
 
       const r = await api.post('/api/tts/preview', {
@@ -224,6 +233,37 @@ export default {
         console.log(rt)
         folder.value = rt
       })
+    }
+
+    const fnOnSave = async () => {
+      if (!name.value) {
+        return notifyError({
+          message: '이름을 입력해주세요',
+          caption: '파일 저장을 위해서 이름을 입력해주세요'
+        })
+      }
+      if (!voice.value) {
+        return notifyError({
+          message: '음성을 선택해주세요',
+          caption:
+            'TTS(Text to Speech) 음성 합성을 위해서 음성(언어)을 선택해주세요'
+        })
+      }
+      if (!message.value) {
+        return notifyError({
+          message: '메시지를 입력해주세요',
+          cation:
+            'TTS(Text to Speech) 음성 합성할 메시지를 입력해주세요'
+        })
+      }
+
+      if (!folder.value) {
+        return notifyError({
+          message: '파일을 저장할 폴더를 선택해주세요',
+          caption:
+            'TTS(Text to Speech) 음성 합성 파일을 저장할 위치를 선택해주세요'
+        })
+      }
     }
 
     onMounted(async () => {
@@ -252,6 +292,7 @@ export default {
       fnTTSPreview,
       fnFilter,
       fnFolderSel,
+      fnOnSave,
       dialogRef,
       onDialogHide,
       onOKClick(item) {

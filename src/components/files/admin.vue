@@ -37,7 +37,7 @@
               class="folder"
               v-for="(folder, index) in folders"
               :key="index"
-              :label="folder.toUpperCase()"
+              :label="folder"
               @click="fnMoveFolder(index + 1)"
             />
           </q-breadcrumbs>

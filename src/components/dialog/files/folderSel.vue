@@ -14,12 +14,48 @@
             />
             <div class="name" style="font-size: 1.2rem">폴더선택</div>
           </div>
+          <div class="q-gutter-x-sm">
+            <q-btn
+              flat
+              round
+              size="md"
+              color="yellow"
+              icon="svguse:icons.svg#folder-fill"
+              @click="fnCreateFolder"
+            >
+              <q-tooltip
+                anchor="top middle"
+                self="bottom middle"
+                :offset="[10, 10]"
+                >폴더생성</q-tooltip
+              >
+            </q-btn>
+            <q-btn
+              flat
+              round
+              size="md"
+              color="red"
+              icon="svguse:icons.svg#trash-fill"
+              @click="fnDeleteFolder"
+            >
+              <q-tooltip
+                anchor="top middle"
+                self="bottom middle"
+                :offset="[10, 10]"
+                >폴더삭제</q-tooltip
+              >
+            </q-btn>
+          </div>
         </div>
       </q-card-section>
 
       <q-card-section>
         <q-table
           dense
+          flat
+          hide-header
+          hide-bottom
+          separator="none"
           :columns="[
             {
               name: 'name',
@@ -33,9 +69,12 @@
           row-key="name"
           selection="single"
           v-model:selected="selected"
+          :pagination="{ rowsPerPage: 0 }"
         >
           <template #top>
-            <div class="q-ml-md row items-center q-gutter-x-xs">
+            <div
+              class="q-ml-md row items-center q-mt-sm q-gutter-x-xs"
+            >
               <span>/</span>
               <q-breadcrumbs
                 class="q-mr-md cursor-pointer"
@@ -46,15 +85,15 @@
                   class="cursor-pointer text-blue-10"
                   v-for="(folder, index) in folders"
                   :key="index"
-                  :label="folder.toUpperCase()"
+                  :label="folder"
                   @click="fnMoveFolder(index + 1)"
                 />
               </q-breadcrumbs>
             </div>
           </template>
 
-          <template v-slot:body-selection="scope">
-            <q-checkbox v-model="scope.selected" />
+          <template #body-selection="scope">
+            <q-checkbox size="xs" v-model="scope.selected" />
           </template>
 
           <template #body-cell-name="props">
@@ -64,6 +103,11 @@
                   class="cursor-pointer"
                   @click="fnClickItem(props.row)"
                 >
+                  <q-icon
+                    color="yellow"
+                    size="sm"
+                    name="svguse:icons.svg#folder-fill"
+                  ></q-icon>
                   {{ props.row.name }}
                 </span>
               </div>
@@ -99,6 +143,9 @@ import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { api } from '@/boot/axios'
 
+import addFolder from '@/components/dialog/files/addFolder'
+import Delete from '@/components/dialog/delete'
+
 export default {
   props: {
     zones: Array
@@ -112,7 +159,7 @@ export default {
 
     const user = computed(() => state.user.user)
     const files = ref([])
-    const folders = ref(['media'])
+    const folders = ref(['Media'])
     const selected = ref([])
 
     async function fnMoveFolder(idx) {
@@ -124,22 +171,37 @@ export default {
       await fnUpdateFolder()
     }
 
-    async function fnUpdateFolder() {
+    const fnUpdateFolder = async () => {
       $q.loading.show()
       try {
         const r = await api.post('/api/files/getFolder', {
           folder: folders.value
         })
-        files.value = r.data.files.sort(function (a, b) {
-          if (a.type === 'directory') {
-            return -1
-          }
-        })
+        files.value = r.data.files
       } catch (e) {
         $q.loading.hide()
         console.error(e.message)
       }
       $q.loading.hide()
+    }
+
+    const fnCreateFolder = () => {
+      $q.dialog({
+        component: addFolder,
+        componentProps: { folders: folders.value }
+      }).onOk(async () => {
+        await fnUpdateFolder()
+      })
+    }
+
+    const fnDeleteFolder = () => {
+      $q.dialog({
+        component: Delete,
+        componentProps: { file: selected.value[0] }
+      }).onOk(async (rt) => {
+        await api.post('/api/files/delete', rt)
+        await fnUpdateFolder()
+      })
     }
 
     async function fnClickItem(item) {
@@ -168,6 +230,8 @@ export default {
       fnMoveFolder,
       fnPreview,
       fnClickItem,
+      fnCreateFolder,
+      fnDeleteFolder,
       dialogRef,
       onDialogHide,
       onOKClick(file) {

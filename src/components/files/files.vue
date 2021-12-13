@@ -33,7 +33,7 @@
               class="folder"
               v-for="(folder, index) in folders"
               :key="index"
-              :label="folder.toUpperCase()"
+              :label="folder"
               @click="fnMoveFolder(index + 1)"
             />
           </q-breadcrumbs>
@@ -201,7 +201,7 @@ export default {
     const { humanStorageSize } = format
     const user = computed(() => state.user.user)
     const files = ref([])
-    const folders = ref(['media'])
+    const folders = ref(['Media'])
 
     async function fnMoveFolder(idx) {
       if (idx === 0) {
