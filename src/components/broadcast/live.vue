@@ -195,7 +195,7 @@ export default {
       $q.dialog({
         component: dlTTS
       }).onOk(async (rt) => {
-        console.log(rt)
+        live.file = rt
       })
     }
 

@@ -166,13 +166,14 @@ export default {
       useDialogPluginComponent()
     const { state, commit, dispatch } = useStore()
     const $q = useQuasar()
-    const { notifyError } = notify()
+    const { notifyInfo, notifyError } = notify()
 
     const user = computed(() => state.user.user)
     const voices = computed(() => state.tts.voices)
     const name = ref('')
     const message = ref('')
     const folder = ref(null)
+    const file = ref(null)
     const tree = ref([])
     const voice = computed({
       get() {
@@ -197,7 +198,7 @@ export default {
       message.value = ''
     }
 
-    const fnTTSPreview = async () => {
+    const makeTtsTempFile = async () => {
       if (!voice.value) {
         return notifyError({
           message: '음성을 선택해주세요',
@@ -219,7 +220,19 @@ export default {
         rate: rate.value,
         message: message.value
       })
-      dispatch('preview/openPreview', r.data)
+      return (file.value = r.data)
+    }
+
+    const fnTTSPreview = async () => {
+      try {
+        $q.loading.show()
+        await makeTtsTempFile()
+        dispatch('preview/openPreview', file.value)
+      } catch (e) {
+        $q.loading.hide()
+        console.error(e.response)
+      }
+      $q.loading.hide()
     }
 
     const fnFilter = (node, filter) => {
@@ -264,6 +277,59 @@ export default {
             'TTS(Text to Speech) 음성 합성 파일을 저장할 위치를 선택해주세요'
         })
       }
+      try {
+        $q.loading.show()
+        // 중복 확인
+        const folders = `${folder.value.base}/${folder.value.name}`
+        const filename = `${name.value}.mp3`
+        await api.get(
+          `/api/files/check?folder=${encodeURIComponent(
+            folders
+          )}&name=${encodeURIComponent(filename)}`
+        )
+
+        // 파일 생성
+        r = await api.post('/api/tts/makeFile', {
+          name: name.value,
+          voice: voice.value,
+          rate: rate.value,
+          message: message.value,
+          folder: folder.value
+        })
+
+        file.value = r.data
+
+        $q.loading.hide()
+        notifyInfo({
+          message: '음성 합성이 완료되었습니다.',
+          caption: 'TTS(Text to Speech) 음성 합성이 완료 되었습니다.'
+        })
+      } catch (e) {
+        $q.loading.hide()
+        if (e.response.status == 409) {
+          notifyError({
+            message: '파일 중복',
+            caption: '선택된 폴더에 동일한 이름의 파일이 존재합니다.'
+          })
+        } else {
+          console.error(e.response)
+        }
+      }
+    }
+
+    const onOKClick = async () => {
+      if (file.value) {
+        return onDialogOK(file.value)
+      }
+      $q.loading.show()
+      try {
+        await makeTtsTempFile()
+        onDialogOK(file.value)
+      } catch (e) {
+        $q.loading.hide()
+        console.error(e.response)
+      }
+      $q.loading.hide()
     }
 
     onMounted(async () => {
@@ -295,9 +361,7 @@ export default {
       fnOnSave,
       dialogRef,
       onDialogHide,
-      onOKClick(item) {
-        onDialogOK(item)
-      },
+      onOKClick,
       onCancelClick: onDialogCancel
     }
   }
