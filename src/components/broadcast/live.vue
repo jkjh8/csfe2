@@ -188,7 +188,7 @@
       <q-card-section>
         <div class="row justify-center items-center">
           <q-btn
-            style="border-radius: 1rem"
+            style="border-radius: 0.5rem"
             icon="svguse:icons.svg#ban"
             size="3rem"
             label="방송정지"
@@ -202,10 +202,10 @@
 </template>
 
 <script>
-22
-import { reactive, toRefs, ref, onBeforeUnmount } from 'vue'
+import { reactive, toRefs, ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import notify from '@/api/notify'
+import { socket } from '@/api/socketio'
 
 import ZoneSel from '@/components/broadcast/zoneSel'
 import FileSel from '@/components/files/fileSel'
@@ -221,12 +221,7 @@ export default {
     const dlOnAir = ref(false)
     const sec = ref(1)
     const timer = ref(null)
-    const message = ref([
-      '기동완료',
-      '음원재생시작',
-      '음원재생시작',
-      '음원재생시작'
-    ])
+    const message = ref([])
     const live = reactive({
       name: '',
       nodes: [],
@@ -275,6 +270,13 @@ export default {
     }
 
     const fnOnair = () => {
+      if (!socket.connected) {
+        return notifyError({
+          message: '통신에 문제가 있습니다.',
+          caption:
+            '페이지를 새로고침하시거나 잠시후에 다시 시도해주세요.'
+        })
+      }
       if (!live.name) {
         return notifyError({
           message: '이름을 입력해주세요'
@@ -292,15 +294,19 @@ export default {
       timer.value = setInterval(() => {
         sec.value += 1
       }, 1000)
+      socket.emit('command', 'onair', {
+        ...live
+      })
     }
 
     const fnStop = () => {
       clearInterval(timer.value)
       sec.value = 1
-      setTimeout(() => {
-        dlOnAir.value = false
-      }, 1000)
+      dlOnAir.value = false
+      message.value = []
+      socket.emit('command', 'offair', { ...live })
     }
+
     const fnHms = (seconds) => {
       const hour =
         parseInt(seconds / 3600) < 10
@@ -315,8 +321,10 @@ export default {
       return `${hour}:${min}:${sec}`
     }
 
-    onBeforeUnmount(() => {
-      console.log('close live page')
+    onMounted(() => {
+      socket.on('page_message', (msg) => {
+        message.value.push(msg)
+      })
     })
 
     return {

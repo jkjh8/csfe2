@@ -25,12 +25,18 @@
 import Links from '@/components/layout/link'
 import UserState from '@/components/layout/userState'
 import Preview from '@/components/dialog/preview'
-import { defineComponent } from 'vue'
+import { defineComponent, onMounted } from 'vue'
+import { socket } from '@/api/socketio'
 
 export default defineComponent({
   name: 'MainLayout',
   components: { Links, UserState, Preview },
   setup() {
+    onMounted(() => {
+      socket.on('connection', (msg) => {
+        console.log('connected', msg)
+      })
+    })
     return {
       //
     }
