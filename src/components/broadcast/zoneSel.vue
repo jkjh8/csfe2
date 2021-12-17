@@ -15,7 +15,7 @@
         <q-tree :nodes="nodes" node-key="_id">
           <template #default-header="props">
             <div>
-              <q-icon name="svguse:icons.svg#map1" size=".8rem" />
+              <q-icon name="svguse:color.svg#map1" size=".8rem" />
               <span class="q-ml-sm">{{ props.node.name }}</span>
             </div>
           </template>

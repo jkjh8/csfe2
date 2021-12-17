@@ -105,17 +105,35 @@
 
           <q-td key="zones" :props="props" style="max-width: 100px">
             <div class="hiddenText">
-              {{ props.row.zones.join(',') }}
-              <q-tooltip
-                :delay="1000"
-                anchor="center right"
-                :offset="[-30, 10]"
-                max-width="18rem"
-                max-height="16rem"
-                style="background: rgba(100, 100, 50, 0.8)"
+              {{ props.row.zones.map((e) => e.name).join(', ') }}
+              <q-popup-proxy
+                style="
+                  width: 300px;
+                  background: rgba(255, 255, 255, 0.8);
+                "
               >
-                {{ props.row.zones.join(',') }}
-              </q-tooltip>
+                <q-scroll-area
+                  style="
+                    height: 200px;
+                    min-height: 100px;
+                    max-height: 300px;
+                  "
+                >
+                  <q-tree :nodes="props.row.zones" node-key="_id">
+                    <template #default-header="props">
+                      <div>
+                        <q-icon
+                          name="svguse:color.svg#map1"
+                          size=".8rem"
+                        />
+                        <span class="q-ml-sm">{{
+                          props.node.name
+                        }}</span>
+                      </div>
+                    </template>
+                  </q-tree>
+                </q-scroll-area>
+              </q-popup-proxy>
             </div>
           </q-td>
 

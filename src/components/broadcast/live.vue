@@ -202,7 +202,8 @@
 </template>
 
 <script>
-import { reactive, toRefs, ref, onMounted } from 'vue'
+import { reactive, toRefs, ref, onMounted, computed } from 'vue'
+import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import notify from '@/api/notify'
 import { socket } from '@/api/socketio'
@@ -222,6 +223,9 @@ export default {
     const sec = ref(1)
     const timer = ref(null)
     const message = ref([])
+    const { state } = useStore()
+
+    const user = computed(() => state.user.user)
     const live = reactive({
       name: '',
       nodes: [],
@@ -295,7 +299,8 @@ export default {
         sec.value += 1
       }, 1000)
       socket.emit('command', 'onair', {
-        ...live
+        ...live,
+        user: user.value
       })
     }
 
@@ -304,7 +309,7 @@ export default {
       sec.value = 1
       dlOnAir.value = false
       message.value = []
-      socket.emit('command', 'offair', { ...live })
+      socket.emit('command', 'offair', { ...live, user: user.value })
     }
 
     const fnHms = (seconds) => {
