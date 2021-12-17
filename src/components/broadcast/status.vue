@@ -43,6 +43,14 @@
                       round
                       flat
                       size="sm"
+                      color="red"
+                      icon="svguse:icons.svg#ban"
+                      @click.prevent.stop="fnCancelAll(device)"
+                    />
+                    <q-btn
+                      round
+                      flat
+                      size="sm"
                       icon="svguse:icons.svg#refresh"
                       @click.prevent.stop="fnRefresh(device)"
                     />
@@ -154,10 +162,11 @@ import Volume from '@/components/dialog/broadcast/volume'
 
 export default {
   setup() {
-    const { getters, dispatch } = useStore()
+    const { state, getters, dispatch } = useStore()
     const $q = useQuasar()
     const { notifyError } = notify()
 
+    const user = computed(() => state.user.user)
     const devices = computed(() => getters['devices/parents'])
 
     const fnRefresh = async (device) => {
@@ -187,6 +196,7 @@ export default {
         $q.loading.show()
         try {
           const r = await api.put('/api/devices/volume', rt)
+          $q.loading.hide()
           if (r.data.status) {
             await api.get(
               `/api/devices/refreshPa?ipaddress=${r.data.device.ipaddress}`
@@ -222,7 +232,7 @@ export default {
         }
       } catch (e) {
         $q.loading.hide()
-        console.error(e.message)
+        console.error(e.response)
         notifyError({
           message: '상태를 변경할 수 없습니다',
           caption: '잠시후에 다시 시도해 주세요'
@@ -231,11 +241,25 @@ export default {
       $q.loading.hide()
     }
 
+    const fnCancelAll = async (device) => {
+      console.log(device)
+      // $q.loading.show()
+      try {
+        const r = await api.get(
+          `/api/devices/cancelAll?ipaddress=${device.ipaddress}&type=${device.devicetype}&user=${user.value.email}`
+        )
+        console.log(r)
+      } catch (e) {
+        console.error(e.response)
+      }
+    }
+
     return {
       devices,
       fnRefresh,
       fnVolume,
-      fnMute
+      fnMute,
+      fnCancelAll
     }
   }
 }

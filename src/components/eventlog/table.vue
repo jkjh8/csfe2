@@ -24,6 +24,12 @@
           field: 'source'
         },
         {
+          name: 'id',
+          align: 'center',
+          label: '코드',
+          field: 'id'
+        },
+        {
           name: 'zones',
           align: 'center',
           label: '지역',
@@ -100,6 +106,29 @@
           <q-td key="source" :props="props">
             <div>
               {{ props.row.source }}
+            </div>
+          </q-td>
+
+          <q-td key="id" :props="props" style="width: 80px">
+            <div
+              style="
+                width: 100%;
+                max-width: 200px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+            >
+              {{ props.row.id }}
+              <q-tooltip
+                :delay="1000"
+                anchor="center right"
+                :offset="[-30, 10]"
+                max-width="18rem"
+                max-height="16rem"
+                style="background: rgba(100, 100, 50, 0.8)"
+              >
+                {{ props.row.id }}
+              </q-tooltip>
             </div>
           </q-td>
 

@@ -10,6 +10,7 @@ import devices from './devices'
 import preview from './preview'
 import schedules from './schedules'
 import tts from './tts'
+import page from './page'
 
 let Store
 
@@ -23,7 +24,8 @@ export default store(function (/* { ssrContext } */) {
       devices,
       preview,
       schedules,
-      tts
+      tts,
+      page
     },
 
     // enable strict mode (adds overhead!)

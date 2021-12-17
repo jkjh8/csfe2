@@ -18,6 +18,13 @@
           <q-btn
             rounded
             flat
+            label="프리셋"
+            color="grey"
+            @click="fnPreset"
+          />
+          <q-btn
+            rounded
+            flat
             label="초기화"
             color="primary"
             @click="fnReset"
@@ -44,7 +51,7 @@
             :height="160"
           />
           <q-btn
-            color="primary"
+            color="grey"
             rounded
             unelevated
             class="full-width"
@@ -75,7 +82,7 @@
             v-if="mode === 'Media'"
             class="full-width"
             rounded
-            color="primary"
+            color="grey"
             unelevated
             label="파일선택"
             @click="fnFileSel"
@@ -84,7 +91,7 @@
             v-else
             class="full-width"
             rounded
-            color="primary"
+            color="grey"
             unelevated
             label="TTS생성"
             @click="fnTTSCreate"
@@ -126,7 +133,7 @@
             class="full-width"
             rounded
             unelevated
-            color="yellow-10"
+            color="primary"
             label="방송시작"
             @click="fnOnair"
           />
@@ -172,7 +179,7 @@
           style="font-size: 2rem"
         >
           <span>방송시간:</span>
-          <span>{{ fnHms(sec) }}</span>
+          <span>{{ hms(sec) }}</span>
         </div>
       </q-card-section>
 
@@ -205,14 +212,18 @@
 import { reactive, toRefs, ref, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import { v4 as uuidv4 } from 'uuid'
+
 import notify from '@/api/notify'
 import { socket } from '@/api/socketio'
+import { hms } from '@/api/time'
 
 import ZoneSel from '@/components/broadcast/zoneSel'
 import FileSel from '@/components/files/fileSel'
 import dlZoneSel from '@/components/dialog/broadcast/zoneSel'
 import dlFileSel from '@/components/dialog/files/fileSel'
 import dlTTS from '@/components/dialog/broadcast/ttsCreate'
+import dlPreset from '@/components/dialog/broadcast/pagePreset'
 
 export default {
   components: { ZoneSel, FileSel },
@@ -223,9 +234,10 @@ export default {
     const sec = ref(1)
     const timer = ref(null)
     const message = ref([])
-    const { state } = useStore()
+    const { state, commit } = useStore()
 
     const user = computed(() => state.user.user)
+    const pageId = computed(() => state.page.pageId)
     const live = reactive({
       name: '',
       nodes: [],
@@ -235,6 +247,17 @@ export default {
       volume: 70,
       startChime: false
     })
+
+    const fnPreset = () => {
+      $q.dialog({
+        component: dlPreset,
+        componentProps: {
+          preset: { ...live }
+        }
+      }).onOk(async (rt) => {
+        console.log(rt)
+      })
+    }
 
     const fnReset = () => {
       ;(live.name = ''),
@@ -294,13 +317,11 @@ export default {
       if (!live.file) {
         return notifyError({ message: '미디어 파일을 선택해주세요' })
       }
-      dlOnAir.value = true
-      timer.value = setInterval(() => {
-        sec.value += 1
-      }, 1000)
-      socket.emit('command', 'onair', {
+      commit('page/updatePageId', uuidv4())
+      socket.emit('command', 'check', {
+        id: pageId.value,
         ...live,
-        user: user.value
+        user: user.value.email
       })
     }
 
@@ -309,32 +330,55 @@ export default {
       sec.value = 1
       dlOnAir.value = false
       message.value = []
-      socket.emit('command', 'offair', { ...live, user: user.value })
-    }
-
-    const fnHms = (seconds) => {
-      const hour =
-        parseInt(seconds / 3600) < 10
-          ? '0' + parseInt(seconds / 3600)
-          : parseInt(seconds / 3600)
-      const min =
-        parseInt((seconds % 3600) / 60) < 10
-          ? '0' + parseInt((seconds % 3600) / 60)
-          : parseInt((seconds % 3600) / 60)
-      const sec =
-        seconds % 60 < 10 ? '0' + (seconds % 60) : seconds % 60
-      return `${hour}:${min}:${sec}`
+      socket.emit('command', 'offair', {
+        id: pageId.value,
+        ...live,
+        user: user.value.email
+      })
     }
 
     onMounted(() => {
       socket.on('page_message', (msg) => {
         message.value.push(msg)
       })
+      socket.on('page_checked', (args) => {
+        try {
+          const { id, dup } = args
+          console.log(args)
+          if (id === pageId.value) {
+            if (dup && dup.length) {
+              notifyError({
+                message: '방송구간이 중복되었습니다',
+                caption: `중복된 구간은 ${dup
+                  .map((e) => e.name)
+                  .join(',')} 입니다.`
+              })
+            } else {
+              dlOnAir.value = true
+              timer.value = setInterval(() => {
+                sec.value += 1
+              }, 1000)
+              socket.emit('command', 'onair', {
+                id: pageId.value,
+                ...live,
+                user: user.value.email
+              })
+            }
+          }
+        } catch (e) {
+          notifyError({
+            message: '방송 상태를 확인할 수 없습니다',
+            caption:
+              '잠시후에 다시 시도하거나 관리자에게 문의해주세요.'
+          })
+        }
+      })
     })
 
     return {
       message,
       sec,
+      fnPreset,
       fnReset,
       fnZoneSel,
       fnFileSel,
@@ -342,7 +386,7 @@ export default {
       fnOnair,
       dlOnAir,
       fnStop,
-      fnHms,
+      hms,
       ...toRefs(live)
     }
   }
