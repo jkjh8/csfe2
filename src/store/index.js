@@ -17,6 +17,7 @@ let Store
 export default store(function (/* { ssrContext } */) {
   Store = createStore({
     modules: {
+      namespaced: true,
       user,
       users,
       eventlog,
