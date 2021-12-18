@@ -11,10 +11,27 @@
         </span>
       </div>
 
-      <div>
+      <div class="q-gutter-x-sm row no-wrap items-center">
         <q-btn
           round
           flat
+          icon="svguse:icons.svg#plus-circle"
+          color="primary"
+          size="sm"
+          @click="fnAdd"
+        >
+          <q-tooltip
+            style="background: rgb(50, 50, 50, 0.6)"
+            anchor="top middle"
+            self="center middle"
+          >
+            스케줄추가
+          </q-tooltip>
+        </q-btn>
+        <q-btn
+          round
+          flat
+          size="sm"
           :icon="
             viewMode === 'list'
               ? 'svguse:icons.svg#calendar-fill'
@@ -24,8 +41,7 @@
           @click="$store.dispatch('schedules/changeView')"
         >
           <q-tooltip
-            style="background: rgb(5, 5, 5, 0.5)"
-            :offset="[10, 10]"
+            style="background: rgb(50, 50, 50, 0.6)"
             anchor="top middle"
             self="center middle"
           >
@@ -49,6 +65,7 @@ import { useQuasar } from 'quasar'
 
 import Table from '@/components/broadcast/scheduleTable'
 import Calendar from '@/components/broadcast/scheduleCalendar'
+import addSchedule from '@/components/dialog/broadcast/addSchedule'
 
 export default {
   components: { Table, Calendar },
@@ -72,9 +89,16 @@ export default {
       $q.loading.hide()
     })
 
+    const fnAdd = () => {
+      $q.dialog({
+        component: addSchedule
+      })
+    }
+
     return {
       user,
       viewMode,
+      fnAdd,
       deviceCount,
       deviceError,
       activeCount
