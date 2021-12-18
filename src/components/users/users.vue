@@ -92,6 +92,7 @@
           </div>
         </q-td>
       </template>
+
       <template #body-cell-admin="props">
         <q-td :props="props">
           <div>
@@ -106,7 +107,25 @@
               round
               flat
               @click="fnEditAdmin(props.row)"
-            />
+            >
+              <q-tooltip>사용자 권한 변경</q-tooltip>
+            </q-btn>
+          </div>
+        </q-td>
+      </template>
+
+      <template #body-cell-auth="props">
+        <q-td :props="props">
+          <div>
+            <q-btn
+              round
+              flat
+              size="sm"
+              icon="svguse:icons.svg#pencil-fill"
+              @click="fnZoneSel(props.row)"
+            >
+              <q-tooltip> 사용자권한 </q-tooltip>
+            </q-btn>
           </div>
         </q-td>
       </template>
@@ -170,6 +189,7 @@ import moment from 'moment'
 import deleteUser from '@/components/dialog/delete'
 import adminUser from '@/components/dialog/users/admin'
 import userLevel from '@/components/dialog/users/level'
+import zoneSel from '@/components/dialog/broadcast/zoneSel'
 
 export default {
   setup() {
@@ -236,12 +256,28 @@ export default {
       }
     }
 
+    const fnZoneSel = (user) => {
+      $q.dialog({
+        component: zoneSel,
+        componentProps: { zones: user.auth }
+      }).onOk(async (rt) => {
+        console.log(rt)
+        await api.post('/api/users/auth', {
+          ...rt,
+          id: user._id,
+          email: user.email
+        })
+        await dispatch('users/updateUsers')
+      })
+    }
+
     return {
       users,
       fnDateFormat,
       fnDeleteUser,
       fnEditAdmin,
-      fnEditLevel
+      fnEditLevel,
+      fnZoneSel
     }
   }
 }

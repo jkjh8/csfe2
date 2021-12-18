@@ -27,7 +27,7 @@ export function parents(state, getters, rootState, rootGetters) {
           parents.push(device)
         } else {
           const children = []
-          if (device.children && children.length) {
+          if (device.children && device.children.length) {
             device.children.forEach((child) => {
               const disabled = !rootState.user.user.auth.includes(
                 child._id
