@@ -211,6 +211,41 @@
                 "
               />
             </div>
+            <!-- 볼륨 -->
+            <div
+              class="bg-grey-2"
+              style="border-radius: 0.5rem; padding: 0.1rem 1rem"
+            >
+              <div class="fit row justify-between items-center">
+                <div class="listname">볼륨</div>
+                <div style="width: 80%; min-width: 200px">
+                  <q-slider v-model="volume" label />
+                </div>
+              </div>
+            </div>
+
+            <!-- chime -->
+            <div class="row justify-end">
+              <q-checkbox
+                v-model="startChime"
+                label="시작차임"
+                left-label
+                dense
+              />
+            </div>
+
+            <q-separator />
+
+            <!-- 상세 설명 -->
+            <div>
+              <q-input
+                v-model="description"
+                type="textarea"
+                filled
+                dense
+                label="상세설명"
+              />
+            </div>
           </div>
         </div>
       </q-card-section>
@@ -239,11 +274,10 @@
 </template>
 
 <script>
-import { reactive, toRefs, computed } from 'vue'
+import { reactive, toRefs, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useDialogPluginComponent, useQuasar, uid } from 'quasar'
 import moment from 'moment'
-import { api } from '@/boot/axios'
 import notify from '@/api/notify'
 
 import ZoneSel from '@/components/broadcast/zoneSel'
@@ -270,6 +304,7 @@ export default {
     const user = computed(() => state.user.user)
     const current = reactive({
       id: uid(),
+      user: user.value.email,
       name: '',
       repeat: '한번',
       time: moment().format('hh:mm'),
@@ -309,15 +344,46 @@ export default {
       })
     }
 
+    const fnTTSCreate = () => {
+      $q.dialog({
+        component: dlTTS
+      }).onOk(async (rt) => {
+        current.file = rt.file
+      })
+    }
+
     const onOKClick = async () => {
+      if (!current.name) {
+        return notifyError({
+          message: '이름을 입력하세요'
+        })
+      }
+      if (!current.selected.length) {
+        return notifyError({
+          message: '방송구간을 선택 해주세요'
+        })
+      }
+      if (!current.file) {
+        return notifyError({
+          message: '방송 미디어를 선택 해주세요'
+        })
+      }
       onDialogOK(current)
     }
+
+    onMounted(() => {
+      console.log(props.schedule)
+      if (props.schedule) {
+        current = { ...schedule }
+      }
+    })
 
     return {
       ...toRefs(current),
       parents,
       fnAddZones,
       fnFileSel,
+      fnTTSCreate,
       dialogRef,
       onDialogHide,
       onOKClick,

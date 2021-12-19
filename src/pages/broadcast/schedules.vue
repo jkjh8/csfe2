@@ -18,7 +18,7 @@
           icon="svguse:icons.svg#plus-circle"
           color="primary"
           size="sm"
-          @click="fnAdd"
+          @click="fnAdd()"
         >
           <q-tooltip
             style="background: rgb(50, 50, 50, 0.6)"
@@ -62,6 +62,8 @@
 import { onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import { api } from '@/boot/axios'
+import notify from '@/api/notify'
 
 import Table from '@/components/broadcast/scheduleTable'
 import Calendar from '@/components/broadcast/scheduleCalendar'
@@ -72,6 +74,7 @@ export default {
   setup() {
     const { state, getters, dispatch } = useStore()
     const $q = useQuasar()
+    const { notifyError } = notify()
 
     const user = computed(() => state.user.user)
     const viewMode = computed(() => state.schedules.viewMode)
@@ -83,17 +86,24 @@ export default {
       $q.loading.show()
       try {
         await dispatch('devices/getDevices')
+        await dispatch('schedules/updateSchedules')
       } catch (e) {
         console.error(e)
       }
       $q.loading.hide()
     })
 
-    const fnAdd = () => {
+    const fnAdd = (item) => {
       $q.dialog({
-        component: addSchedule
+        component: addSchedule,
+        componentProps: { schedule: item }
       }).onOk(async (rt) => {
-        console.log(rt)
+        try {
+          const r = await api.post('/api/broadcast/schedule', rt)
+          console.log(r)
+        } catch (e) {
+          console.error(e)
+        }
       })
     }
 
