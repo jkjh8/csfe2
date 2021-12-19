@@ -131,7 +131,6 @@ export default {
     }
 
     onMounted(() => {
-      console.log(props.zones)
       ticked.value = props.zones
     })
 

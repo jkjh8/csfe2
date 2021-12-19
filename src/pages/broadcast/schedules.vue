@@ -1,6 +1,6 @@
 <template>
   <div style="margin: 5% 10% 0 10%">
-    <div class="row justify-between items-center">
+    <div class="row no-wrap justify-between items-center">
       <div class="row justify-start items-end q-gutter-sm">
         <q-icon name="svguse:icons.svg#calendar-fill" size="sm" />
         <span class="name" style="font-size: 1.4rem"> 예약방송 </span>
@@ -92,6 +92,8 @@ export default {
     const fnAdd = () => {
       $q.dialog({
         component: addSchedule
+      }).onOk(async (rt) => {
+        console.log(rt)
       })
     }
 

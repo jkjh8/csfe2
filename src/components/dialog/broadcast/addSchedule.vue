@@ -118,14 +118,105 @@
                 </q-icon>
               </template>
             </q-input>
+
+            <!-- 반복 매주 -->
+            <q-select
+              v-if="repeat === '매주'"
+              v-model="week"
+              filled
+              dense
+              label="요일선택"
+              :options="[
+                { label: '일요일', value: 0 },
+                { label: '월요일', value: 1 },
+                { label: '화요일', value: 2 },
+                { label: '수요일', value: 3 },
+                { label: '목요일', value: 4 },
+                { label: '금요일', value: 5 },
+                { label: '토요일', value: 6 }
+              ]"
+            />
+
+            <!-- 매일 공통 시간선택 -->
+            <q-input
+              v-model="time"
+              filled
+              dense
+              mask="time"
+              label="시간선택"
+            >
+              <template #append>
+                <q-icon name="access_time" class="cursor-pointer">
+                  <q-popup-proxy
+                    transition-show="scale"
+                    transition-hide="scale"
+                  >
+                    <q-time v-model="time">
+                      <q-btn
+                        class="floating shadow-15"
+                        round
+                        icon="close"
+                        size="sm"
+                        color="yellow"
+                        v-close-popup
+                      />
+                    </q-time>
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
+            <q-separator />
+            <div style="position: relative">
+              <ZoneSel
+                class="cursor-pointer"
+                :nodes="nodes"
+                :selected="selected"
+                :height="80"
+                @click="fnAddZones"
+              />
+              <q-icon
+                class="right-top cursor-pointer"
+                style="top: 5px"
+                name="svguse:icons.svg#plus-circle"
+                color="primary"
+                size="sm"
+                @click="fnAddZones"
+              />
+            </div>
           </div>
 
-          <div class="col-6 q-pl-md">우</div>
+          <div class="col-6 q-pl-md q-gutter-y-sm">
+            <q-select
+              v-model="mode"
+              filled
+              dense
+              label="방송모드"
+              :options="['Media', 'TTS']"
+            />
+            <div class="q-gutter-y-sm" style="position: relative">
+              <FileSel
+                class="cursor-pointer"
+                :file="file"
+                @click="
+                  mode === 'Media' ? fnFileSel() : fnTTSCreate()
+                "
+              />
+              <q-icon
+                class="right-top cursor-pointer"
+                name="svguse:icons.svg#plus-circle"
+                color="primary"
+                size="sm"
+                @click="
+                  mode === 'Media' ? fnFileSel() : fnTTSCreate()
+                "
+              />
+            </div>
+          </div>
         </div>
       </q-card-section>
 
       <q-card-actions class="bg-grey-1" align="right">
-        <div class="q-mx-sm q-gutter-sm">
+        <div class="q-mx-sm q-gutter-x-sm">
           <q-btn
             label="취소"
             style="width: 5rem"
@@ -134,7 +225,7 @@
             @click="onCancelClick"
           />
           <q-btn
-            color="negative"
+            color="primary"
             style="width: 5rem"
             label="확인"
             unelevated
@@ -155,7 +246,14 @@ import moment from 'moment'
 import { api } from '@/boot/axios'
 import notify from '@/api/notify'
 
+import ZoneSel from '@/components/broadcast/zoneSel'
+import FileSel from '@/components/files/fileSel'
+import dlZoneSel from '@/components/dialog/broadcast/zoneSel'
+import dlFileSel from '@/components/dialog/files/fileSel'
+import dlTTS from '@/components/dialog/broadcast/ttsCreate'
+
 export default {
+  components: { ZoneSel, FileSel },
   props: {
     schedule: Object
   },
@@ -163,9 +261,11 @@ export default {
   setup(props) {
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
       useDialogPluginComponent()
-    const { state } = useStore()
+    const { state, getters } = useStore()
     const $q = useQuasar()
     const { notifyError } = notify()
+
+    const parents = computed(() => getters['devices/parents'])
 
     const user = computed(() => state.user.user)
     const current = reactive({
@@ -180,6 +280,7 @@ export default {
       ttsText: '',
       ttsRate: 200,
       ttsVoice: null,
+      nodes: [],
       selected: [],
       active: true,
       color: user.value.color,
@@ -189,11 +290,34 @@ export default {
       endChime: false,
       volume: 70
     })
-    const onOKClick = async () => {
-      onDialogOK()
+
+    const fnAddZones = () => {
+      $q.dialog({
+        component: dlZoneSel,
+        componentProps: { zones: current.selected }
+      }).onOk((rt) => {
+        current.nodes = rt.zones
+        current.selected = rt.selected
+      })
     }
+
+    const fnFileSel = () => {
+      $q.dialog({
+        component: dlFileSel
+      }).onOk(async (rt) => {
+        current.file = rt
+      })
+    }
+
+    const onOKClick = async () => {
+      onDialogOK(current)
+    }
+
     return {
       ...toRefs(current),
+      parents,
+      fnAddZones,
+      fnFileSel,
       dialogRef,
       onDialogHide,
       onOKClick,
@@ -207,6 +331,11 @@ export default {
 .floating {
   position: absolute;
   top: 5px;
+  right: 5px;
+}
+.right-top {
+  position: absolute;
+  top: -5px;
   right: 5px;
 }
 </style>

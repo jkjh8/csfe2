@@ -15,9 +15,11 @@
             >
               <!--  헤더 -->
               <template #header>
+                <!-- 헤어 아바타 -->
                 <q-item-section avatar>
-                  <q-avatar size="sm">
+                  <q-avatar size="md">
                     <q-icon
+                      size="sm"
                       :name="
                         device.status
                           ? 'svguse:color.svg#map1'
@@ -32,11 +34,22 @@
                     />
                   </q-avatar>
                 </q-item-section>
+                <!-- 헤더 이름 -->
                 <q-item-section>
                   <q-item-label class="name" style="font-size: 1rem">
                     {{ device.name }}
                   </q-item-label>
+                  <!-- 헤더 아이피 링크 -->
+                  <q-item-label caption @click.stop>
+                    <a
+                      :href="`http://${device.ipaddress}`"
+                      target="_blank"
+                    >
+                      {{ device.ipaddress }}
+                    </a>
+                  </q-item-label>
                 </q-item-section>
+                <!-- 헤더 버튼 -->
                 <q-item-section side>
                   <div>
                     <q-btn
@@ -58,6 +71,7 @@
                 </q-item-section>
               </template>
 
+              <!-- 자식 -->
               <q-list>
                 <q-item
                   v-for="item in device.children"
@@ -69,6 +83,7 @@
                   "
                   dense
                 >
+                  <!-- 자식 아바타 -->
                   <q-item-section avatar>
                     <q-avatar size="sm">
                       <q-icon
@@ -83,11 +98,22 @@
                       />
                     </q-avatar>
                   </q-item-section>
+                  <!-- 자식 이름 -->
                   <q-item-section>
                     <q-item-label style="font-size: 0.8rem">
                       {{ item.name }}
                     </q-item-label>
+                    <!-- 자식 아이피 링크 -->
+                    <q-item-label caption @click.stop>
+                      <a
+                        :href="`http://${item.ipaddress}`"
+                        target="_blank"
+                      >
+                        {{ item.ipaddress }}
+                      </a>
+                    </q-item-label>
                   </q-item-section>
+                  <!-- 방송상태 표시 -->
                   <q-item-section>
                     <q-item-label style="font-size: 0.8rem">
                       {{
@@ -97,8 +123,10 @@
                       }}
                     </q-item-label>
                   </q-item-section>
+                  <!-- 자식 버튼 -->
                   <q-item-section side>
-                    <div class="row items-center q-gutter-md">
+                    <div class="row items-center q-gutter-x-md">
+                      <!-- 볼륨 버튼 -->
                       <div class="cursor-pointer">
                         <q-btn
                           rounded
@@ -121,6 +149,7 @@
                           </div>
                         </q-btn>
                       </div>
+                      <!-- 뮤트 버튼 -->
                       <div>
                         <q-btn
                           round
@@ -255,6 +284,7 @@ export default {
     }
 
     return {
+      user,
       devices,
       fnRefresh,
       fnVolume,

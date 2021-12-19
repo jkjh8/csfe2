@@ -17,7 +17,6 @@
     "momnet": "^2.29.1",
     "quasar": "^2.0.0",
     "socket.io-client": "^4.4.0",
-    "uuid": "^8.3.2",
     "vue-cookie": "^1.1.4",
     "vue-cookies": "^1.7.4",
     "vuex": "^4.0.1"

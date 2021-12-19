@@ -161,6 +161,12 @@ import dlFolderSel from '@/components/dialog/files/folderSel'
 export default {
   emits: [...useDialogPluginComponent.emits],
   components: { FolderSel },
+  props: {
+    ttsText: String,
+    ttsRate: Number,
+    ttsName: String,
+    ttsVoice: Object
+  },
   setup() {
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
       useDialogPluginComponent()
@@ -319,7 +325,13 @@ export default {
 
     const onOKClick = async () => {
       if (file.value) {
-        return onDialogOK(file.value)
+        return onDialogOK({
+          file: file.value,
+          name: name.value,
+          rate: rate.value,
+          voice: voice.value,
+          message: message.value
+        })
       }
       $q.loading.show()
       try {

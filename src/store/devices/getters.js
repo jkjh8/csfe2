@@ -18,7 +18,6 @@ export function error(state) {
 }
 
 export function parents(state, getters, rootState, rootGetters) {
-  console.log(rootState.user.user)
   const parents = []
   if (state.devices.length) {
     state.devices.forEach((device) => {

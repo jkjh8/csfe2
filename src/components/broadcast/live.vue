@@ -44,18 +44,19 @@
         <q-separator />
 
         <!-- 방송 구간 선책 -->
-        <div class="q-gutter-y-sm">
+        <div class="q-gutter-y-sm" style="position: relative">
           <ZoneSel
+            class="cursor-pointer"
             :nodes="nodes"
             :selected="selected"
             :height="160"
+            @click="fnZoneSel"
           />
-          <q-btn
-            color="grey"
-            rounded
-            unelevated
-            class="full-width"
-            label="방송구간선택"
+          <q-icon
+            class="right-top cursor-pointer"
+            name="svguse:icons.svg#plus-circle"
+            color="primary"
+            size="sm"
             @click="fnZoneSel"
           />
         </div>
@@ -76,26 +77,20 @@
         <q-separator />
 
         <!-- 미디어 선택 -->
-        <div class="q-gutter-y-sm">
-          <FileSel :file="file" />
-          <q-btn
-            v-if="mode === 'Media'"
-            class="full-width"
-            rounded
-            color="grey"
-            unelevated
-            label="파일선택"
-            @click="fnFileSel"
+        <div class="q-gutter-y-sm" style="position: relative">
+          <FileSel
+            class="cursor-pointer"
+            :file="file"
+            @click="mode === 'Media' ? fnFileSel() : fnTTSCreate()"
           />
-          <q-btn
-            v-else
-            class="full-width"
-            rounded
-            color="grey"
-            unelevated
-            label="TTS생성"
-            @click="fnTTSCreate"
-          />
+          <q-icon
+            class="right-top cursor-pointer"
+            name="svguse:icons.svg#plus-circle"
+            color="primary"
+            size="sm"
+            @click="mode === 'Media' ? fnFileSel() : fnTTSCreate()"
+          >
+          </q-icon>
         </div>
 
         <q-separator />
@@ -212,7 +207,6 @@
 import { reactive, toRefs, ref, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
-import { v4 as uuidv4 } from 'uuid'
 
 import notify from '@/api/notify'
 import { socket } from '@/api/socketio'
@@ -292,7 +286,7 @@ export default {
       $q.dialog({
         component: dlTTS
       }).onOk(async (rt) => {
-        live.file = rt
+        live.file = rt.file
       })
     }
 
@@ -317,7 +311,7 @@ export default {
       if (!live.file) {
         return notifyError({ message: '미디어 파일을 선택해주세요' })
       }
-      commit('page/updatePageId', uuidv4())
+      commit('page/updatePageId', uid())
       socket.emit('command', 'check', {
         id: pageId.value,
         ...live,
@@ -403,5 +397,10 @@ export default {
   max-height: 300px;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+.right-top {
+  position: absolute;
+  top: -5px;
+  right: 5px;
 }
 </style>
