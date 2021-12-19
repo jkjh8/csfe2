@@ -373,8 +373,11 @@ export default {
 
     onMounted(() => {
       console.log(props.schedule)
+
       if (props.schedule) {
-        current = { ...schedule }
+        for (const [key, value] of Object.entries(props.schedule)) {
+          current[key] = value
+        }
       }
     })
 

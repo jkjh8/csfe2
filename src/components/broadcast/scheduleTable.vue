@@ -1,4 +1,9 @@
 <template>
+  <div class="row justify-end q-mb-sm">
+    <q-input v-model="search" dense filled label="검색">
+      <template #append> <q-icon name="search" /> </template>
+    </q-input>
+  </div>
   <q-table
     style="border-radius: 0.5rem"
     class="shadow-15"
@@ -25,6 +30,12 @@
         align: 'center'
       },
       {
+        name: 'user',
+        label: '사용자',
+        field: 'user',
+        align: 'center'
+      },
+      {
         name: 'file',
         label: '재생파일',
         field: 'file',
@@ -40,6 +51,7 @@
       { name: 'actions', label: '기능', align: 'center' }
     ]"
     :rows="schedules"
+    :filter="search"
   >
     <template #body="props">
       <q-tr :props="props">
@@ -75,6 +87,19 @@
         <q-td key="name" :props="props">
           <div>
             {{ props.row.name }}
+            <q-tooltip style="background: rgba(0, 0, 0, 0.5)">
+              {{
+                props.row.description
+                  ? props.row.description
+                  : props.row.name
+              }}
+            </q-tooltip>
+          </div>
+        </q-td>
+
+        <q-td key="user" :props="props">
+          <div>
+            {{ props.row.user }}
           </div>
         </q-td>
 
@@ -88,6 +113,9 @@
             "
           >
             {{ props.row.file.name }}
+            <q-tooltip style="background: rgba(0, 0, 0, 0.5)">
+              {{ props.row.file.name }}
+            </q-tooltip>
           </div>
         </q-td>
 
@@ -126,6 +154,7 @@
               size="sm"
               color="green"
               icon="svguse:icons.svg#pencil-fill"
+              @click="fnEdit(props.row)"
             >
               <q-tooltip
                 style="background: rgba(50, 50, 50, 0.5)"
@@ -158,19 +187,24 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { api } from '@/boot/axios'
 import notify from '@/api/notify'
 
+import addSchedule from '@/components/dialog/broadcast/addSchedule'
+
 export default {
   setup() {
     const { state, dispatch } = useStore()
-    const { notifyError } = notify()
+    const { notifyInfo, notifyError } = notify()
+    const $q = useQuasar()
 
     const schedules = computed(() => state.schedules.schedules)
     const user = computed(() => state.user.user)
+
+    const search = ref('')
 
     const fnActive = async (item) => {
       if (item.user !== user.value.email && !user.value.admin) {
@@ -180,12 +214,26 @@ export default {
         })
       }
       await dispatch('schedules/changeActive', item)
+      notifyInfo({
+        message: '해당 스케줄의 동작 상태가 변경되었습니다'
+      })
+    }
+
+    const fnEdit = async (item) => {
+      $q.dialog({
+        component: addSchedule,
+        componentProps: { schedule: item }
+      }).onOk(async (rt) => {
+        console.log(rt)
+      })
     }
 
     return {
       schedules,
       user,
-      fnActive
+      search,
+      fnActive,
+      fnEdit
     }
   }
 }
