@@ -173,7 +173,7 @@ export default {
     const user = computed(() => state.user.user)
 
     const fnActive = async (item) => {
-      if (item.user !== user.value.email || !user.value.admin) {
+      if (item.user !== user.value.email && !user.value.admin) {
         return notifyError({
           message: '해당 스케줄에 대한 권한이 없습니다',
           caption: '관라자에게 문의 하세요.'
