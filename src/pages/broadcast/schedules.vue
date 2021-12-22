@@ -99,8 +99,8 @@ export default {
         componentProps: { schedule: item }
       }).onOk(async (rt) => {
         try {
-          const r = await api.post('/api/broadcast/schedule', rt)
-          console.log(r)
+          await api.post('/api/broadcast/schedule', rt)
+          await dispatch('schedules/updateSchedules')
         } catch (e) {
           console.error(e)
         }

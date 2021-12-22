@@ -224,7 +224,8 @@ export default {
         component: addSchedule,
         componentProps: { schedule: item }
       }).onOk(async (rt) => {
-        console.log(rt)
+        await api.put('/api/broadcast/schedule', rt)
+        dispatch('schedules/updateSchedules')
       })
     }
 

@@ -340,6 +340,7 @@ export default {
       $q.dialog({
         component: dlFileSel
       }).onOk(async (rt) => {
+        console.log(rt)
         current.file = rt
       })
     }
@@ -372,8 +373,6 @@ export default {
     }
 
     onMounted(() => {
-      console.log(props.schedule)
-
       if (props.schedule) {
         for (const [key, value] of Object.entries(props.schedule)) {
           current[key] = value

@@ -49,7 +49,6 @@ export default boot(({ app, router, store }) => {
       try {
         const original = error.config
         const refreshtoken = LocalStorage.getItem('refresh')
-        console.log(refreshtoken)
         if (error.response.status === 401) {
           if (original.url === 'api/auth/refresh') {
             deleteToken()

@@ -129,7 +129,7 @@
             label="확인"
             unelevated
             rounded
-            @click="onOKClick(selected[0])"
+            @click="onOKClick"
           />
         </div>
       </q-card-actions>
@@ -161,10 +161,20 @@ export default {
     const files = ref([])
     const folders = ref(['Media'])
     const selected = ref([])
+    const prev = ref({
+      name: 'Media',
+      base: '',
+      type: 'directory'
+    })
 
     async function fnMoveFolder(idx) {
       if (idx === 0) {
         folders.value = []
+        prev.value = {
+          name: 'Media',
+          base: '',
+          type: 'directory'
+        }
       } else {
         folders.value = folders.value.slice(0, idx)
       }
@@ -207,6 +217,7 @@ export default {
     async function fnClickItem(item) {
       if (item.type === 'directory') {
         folders.value.push(item.name)
+        prev.value = item
         await fnUpdateFolder()
       } else {
         selected.value = item
@@ -215,6 +226,14 @@ export default {
 
     const fnPreview = (file) => {
       dispatch('preview/openPreview', file)
+    }
+
+    const onOKClick = () => {
+      console.log(selected.value)
+      if (selected.value.length) {
+        return onDialogOK(selected.value[0])
+      }
+      onDialogOK(prev.value)
     }
 
     onMounted(async () => {
@@ -234,9 +253,7 @@ export default {
       fnDeleteFolder,
       dialogRef,
       onDialogHide,
-      onOKClick(file) {
-        onDialogOK(file)
-      },
+      onOKClick,
       onCancelClick: onDialogCancel
     }
   }

@@ -39,7 +39,9 @@
             flat
             icon="play_arrow"
             color="green"
-            @click="$store.dispatch('preview/openPreview', file)"
+            @click.prevent.stop="
+              $store.dispatch('preview/openPreview', file)
+            "
           />
         </q-item-section>
       </q-item>

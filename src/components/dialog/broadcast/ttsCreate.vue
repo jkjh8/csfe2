@@ -85,6 +85,7 @@
             />
           </div>
 
+          <!-- 폴더 선택 -->
           <div class="q-gutter-y-sm">
             <FolderSel :folder="folder" />
             <q-btn
@@ -249,7 +250,6 @@ export default {
       $q.dialog({
         component: dlFolderSel
       }).onOk(async (rt) => {
-        console.log(rt)
         folder.value = rt
       })
     }
@@ -295,14 +295,13 @@ export default {
         )
 
         // 파일 생성
-        r = await api.post('/api/tts/makeFile', {
+        const r = await api.post('/api/tts/makeFile', {
           name: name.value,
           voice: voice.value,
           rate: rate.value,
           message: message.value,
           folder: folder.value
         })
-
         file.value = r.data
 
         $q.loading.hide()
@@ -350,7 +349,6 @@ export default {
         const filetree = await api.get('/api/files/getTree')
         tree.value = [filetree.data]
         const r = await api.get('/api/tts')
-        console.log(r.data)
         dispatch('tts/updateInfo', r.data)
       } catch (err) {
         console.error('unknown tts', err)
