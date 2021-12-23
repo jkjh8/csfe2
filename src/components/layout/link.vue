@@ -6,7 +6,7 @@
       <q-menu
         class="bg-black"
         style="border-radius: 2rem"
-        :offset="[130, 5]"
+        :offset="[115, 5]"
       >
         <div class="q-pa-sm">
           <router-link class="link" to="/broadcast/status"
@@ -28,7 +28,7 @@
       <q-menu
         class="bg-black"
         style="border-radius: 2rem"
-        :offset="[100, 5]"
+        :offset="[85, 5]"
       >
         <div class="q-pa-sm">
           <router-link class="link" to="/devices/zones"
@@ -47,7 +47,7 @@
       <q-menu
         class="bg-black"
         style="border-radius: 2rem"
-        :offset="[70, 5]"
+        :offset="[65, 5]"
       >
         <div class="q-pa-sm">
           <router-link class="link" to="/management/files"
@@ -66,7 +66,7 @@
       <q-menu
         class="bg-black"
         style="border-radius: 2rem"
-        :offset="[130, 5]"
+        :offset="[150, 5]"
       >
         <div class="q-pa-sm">
           <router-link class="link" to="">서버관리</router-link>
