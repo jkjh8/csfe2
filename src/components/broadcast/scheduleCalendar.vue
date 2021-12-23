@@ -29,8 +29,19 @@
             :key="event.id"
           >
             <div :style="getStyle(event)" class="my-event">
-              <div class="title q-calendar__ellipsis">
+              <div
+                class="title q-calendar__ellipsis"
+                @click="fnEditSchedule(event)"
+              >
                 {{ event.name }}
+                <q-tooltip
+                  style="background: rgba(0, 0, 0, 0.4)"
+                  :delay="500"
+                >
+                  {{
+                    event.description ? event.description : event.name
+                  }}
+                </q-tooltip>
               </div>
             </div>
           </template>
@@ -50,6 +61,7 @@ import {
 } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import { api } from '@/boot/axios'
 import pickColor from '@/api/pickColor'
 
 import {
@@ -61,6 +73,7 @@ import '@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.sass'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarMonth.sass'
 
 import NavigationBar from './navigationBar.vue'
+import editSchedule from '@/components/dialog/broadcast/addSchedule'
 
 export default defineComponent({
   components: { NavigationBar, QCalendarMonth },
@@ -151,6 +164,18 @@ export default defineComponent({
       }
     }
 
+    const fnEditSchedule = (event) => {
+      $q.dialog({
+        component: editSchedule,
+        componentProps: {
+          schedule: event
+        }
+      }).onOk(async (rt) => {
+        await api.put('/api/broadcast/schedule', rt)
+        dispatch('schedules/updateSchedules')
+      })
+    }
+
     onMounted(async () => {
       $q.loading.show()
       try {
@@ -173,7 +198,8 @@ export default defineComponent({
       onToday,
       onPrev,
       onNext,
-      getStyle
+      getStyle,
+      fnEditSchedule
     }
   }
 })
