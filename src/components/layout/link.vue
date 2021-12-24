@@ -69,7 +69,9 @@
         :offset="[150, 5]"
       >
         <div class="q-pa-sm">
-          <router-link class="link" to="">서버관리</router-link>
+          <router-link class="link" to="/admin/status"
+            >서버관리</router-link
+          >
           <router-link class="link" to="/admin/users"
             >사용자관리</router-link
           >

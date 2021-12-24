@@ -72,6 +72,10 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
+        path: 'status',
+        component: () => import('src/pages/admin/status')
+      },
+      {
         path: 'users',
         component: () => import('src/pages/admin/users.vue')
       },
