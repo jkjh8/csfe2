@@ -181,10 +181,11 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { api } from '@/boot/axios'
+import { socket } from '@/api/socketio'
 import notify from '@/api/notify'
 
 import Volume from '@/components/dialog/broadcast/volume'
@@ -282,6 +283,13 @@ export default {
         console.error(e.response)
       }
     }
+
+    onMounted(() => {
+      socket.on('devices', () => {
+        console.log('updated device')
+        dispatch('devices/getDevices')
+      })
+    })
 
     return {
       user,

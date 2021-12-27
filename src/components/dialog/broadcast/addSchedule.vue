@@ -278,6 +278,8 @@
 import { reactive, toRefs, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useDialogPluginComponent, useQuasar, uid } from 'quasar'
+import { api } from '@/boot/axios'
+
 import moment from 'moment'
 import notify from '@/api/notify'
 
@@ -370,7 +372,20 @@ export default {
           message: '방송 미디어를 선택 해주세요'
         })
       }
-      onDialogOK(current)
+      try {
+        if (current._id) {
+          await api.put('/api/broadcast/schedule', current)
+        } else {
+          await api.post('/api/broadcast/schedule', current)
+        }
+        onDialogOK(current)
+      } catch (e) {
+        console.error(e.response)
+        notifyError({
+          message: e.response.data.message,
+          caption: e.response.data.caption
+        })
+      }
     }
 
     onMounted(() => {

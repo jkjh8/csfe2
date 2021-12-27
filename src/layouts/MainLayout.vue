@@ -22,21 +22,26 @@
 </template>
 
 <script>
+import { defineComponent, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { socket } from '@/api/socketio'
+
 import Links from '@/components/layout/link'
 import UserState from '@/components/layout/userState'
 import Preview from '@/components/dialog/preview'
-import { defineComponent, onMounted } from 'vue'
-import { socket } from '@/api/socketio'
 
 export default defineComponent({
   name: 'MainLayout',
   components: { Links, UserState, Preview },
   setup() {
+    const { dispatch } = useStore()
+
     onMounted(() => {
       socket.on('connection', (msg) => {
         console.log('connected', msg)
       })
     })
+
     return {
       //
     }
