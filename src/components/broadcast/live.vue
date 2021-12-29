@@ -206,7 +206,7 @@
 <script>
 import { reactive, toRefs, ref, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
-import { useQuasar } from 'quasar'
+import { useQuasar, uid } from 'quasar'
 
 import notify from '@/api/notify'
 import { socket } from '@/api/socketio'

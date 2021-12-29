@@ -3,7 +3,7 @@
     <q-card-section>
       <div>
         <q-list>
-          <div v-for="device in devices" :key="device.index">
+          <div v-for="device in parents" :key="device.index">
             <q-expansion-item
               expand-separator
               default-opened
@@ -181,7 +181,7 @@
 </template>
 
 <script>
-import { computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { api } from '@/boot/axios'
@@ -197,7 +197,9 @@ export default {
     const { notifyError } = notify()
 
     const user = computed(() => state.user.user)
-    const devices = computed(() => getters['devices/parents'])
+    const parents = ref([])
+    const devices = computed(() => state.devices.devices)
+    // const devices = computed(() => getters['devices/parents'])
 
     const fnRefresh = async (device) => {
       $q.loading.show()
@@ -227,12 +229,7 @@ export default {
         try {
           const r = await api.put('/api/devices/volume', rt)
           $q.loading.hide()
-          if (r.data.status) {
-            await api.get(
-              `/api/devices/refreshPa?ipaddress=${r.data.device.ipaddress}`
-            )
-            await dispatch('devices/getDevices')
-          }
+          parsedDevice(r.data)
         } catch (e) {
           $q.loading.hide()
           console.error(e.message)
@@ -254,12 +251,7 @@ export default {
           mute: !device.mute[item.channel - 1],
           channel: item.channel
         })
-        if (r.data.status) {
-          await api.get(
-            `/api/devices/refreshPa?ipaddress=${r.data.device.ipaddress}`
-          )
-          await dispatch('devices/getDevices')
-        }
+        parsedDevice(r.data)
       } catch (e) {
         $q.loading.hide()
         console.error(e.response)
@@ -278,21 +270,83 @@ export default {
         const r = await api.get(
           `/api/devices/cancelAll?ipaddress=${device.ipaddress}&type=${device.devicetype}&user=${user.value.email}`
         )
-        console.log(r)
+        parsedDevice(r.data)
       } catch (e) {
         console.error(e.response)
       }
     }
 
-    onMounted(() => {
-      socket.on('devices', () => {
+    const parsedDevice = (items) => {
+      parents.value = []
+      if (items.length) {
+        items.forEach((device) => {
+          if (device.mode === 'Master') {
+            if (user.value.admin) {
+              parents.value.push(device)
+            } else {
+              const children = []
+              if (device.children && device.children.length) {
+                device.children.forEach((child) => {
+                  const disabled = !user.value.auth.includes(
+                    child._id
+                  )
+                  children.push({
+                    _id: child._id,
+                    index: child.index,
+                    name: child.name,
+                    mode: child.mode,
+                    channel: child.channel,
+                    ipaddress: child.ipaddress,
+                    disabled: disabled
+                  })
+                })
+                parents.value.push({
+                  _id: device._id,
+                  index: device.index,
+                  name: device.name,
+                  mode: device.mode,
+                  ipaddress: device.ipaddress,
+                  channels: device.channels,
+                  active: device.active,
+                  mute: device.mute,
+                  gain: device.gain,
+                  children: children
+                })
+              } else {
+                const disabled = !user.value.auth.includes(device._id)
+                parents.value.push({
+                  _id: device._id,
+                  index: device.index,
+                  name: device.name,
+                  mode: device.mode,
+                  ipaddress: device.ipaddress,
+                  channels: device.channels,
+                  active: device.active,
+                  mute: device.mute,
+                  gain: device.gain,
+                  disabled: disabled
+                })
+              }
+            }
+          }
+        })
+      }
+    }
+
+    onMounted(async () => {
+      await dispatch('devices/getDevices')
+      parsedDevice(devices.value)
+
+      socket.on('devices', async (items) => {
+        console.log(items)
         console.log('updated device')
-        dispatch('devices/getDevices')
+        parsedDevice(items)
       })
     })
 
     return {
       user,
+      parents,
       devices,
       fnRefresh,
       fnVolume,
