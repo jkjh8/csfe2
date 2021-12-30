@@ -171,7 +171,6 @@ export default defineComponent({
           schedule: event
         }
       }).onOk(async (rt) => {
-        await api.put('/api/broadcast/schedule', rt)
         dispatch('schedules/updateSchedules')
       })
     }

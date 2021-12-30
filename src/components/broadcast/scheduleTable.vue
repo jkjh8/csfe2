@@ -190,7 +190,6 @@
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
-import { api } from '@/boot/axios'
 import notify from '@/api/notify'
 
 import addSchedule from '@/components/dialog/broadcast/addSchedule'
@@ -200,6 +199,13 @@ export default {
     const { state, dispatch } = useStore()
     const { notifyInfo, notifyError } = notify()
     const $q = useQuasar()
+
+    const pagenation = ref({
+      sortBy: 'desc',
+      descending: false,
+      page: 1,
+      rowsPerPage: 10
+    })
 
     const schedules = computed(() => state.schedules.schedules)
     const user = computed(() => state.user.user)
@@ -224,7 +230,6 @@ export default {
         component: addSchedule,
         componentProps: { schedule: item }
       }).onOk(async (rt) => {
-        await api.put('/api/broadcast/schedule', rt)
         dispatch('schedules/updateSchedules')
       })
     }
