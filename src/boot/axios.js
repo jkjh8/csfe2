@@ -15,7 +15,8 @@ if (process.env.DEV) {
   })
 } else {
   api = axios.create({
-    baseURL: `http://${window.location.hostname}`
+    // baseURL: `http://${window.location.hostname}`
+    baseURL: `http://${window.location.hostname}:3000`
   })
 }
 api.defaults.withCredentials = true

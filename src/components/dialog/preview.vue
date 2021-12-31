@@ -88,7 +88,9 @@ export default {
   setup() {
     const { state, commit } = useStore()
     const changeSize = ref(true)
-    const defaultPath = ref('')
+    const defaultPath = ref(
+      `http://${window.location.hostname}:3000/files`
+    )
     const file = computed(() => state.preview.file)
     const dialog = computed({
       get() {
@@ -110,11 +112,11 @@ export default {
     }
 
     onBeforeMount(() => {
-      if (process.env.DEV) {
-        defaultPath.value = `http://${window.location.hostname}:3000/files`
-      } else {
-        defaultPath.value = `http://${window.location.hostname}/files`
-      }
+      // if (process.env.DEV) {
+      //   defaultPath.value = `http://${window.location.hostname}:3000/files`
+      // } else {
+      //   defaultPath.value = `http://${window.location.hostname}/files`
+      // }
     })
     return {
       changeSize,

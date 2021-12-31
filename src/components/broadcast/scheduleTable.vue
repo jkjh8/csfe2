@@ -51,7 +51,10 @@
       { name: 'actions', label: '기능', align: 'center' }
     ]"
     :rows="schedules"
+    row-key="_id"
     :filter="search"
+    v-model:pagination="pagination"
+    hide-pagination
   >
     <template #body="props">
       <q-tr :props="props">
@@ -170,6 +173,7 @@
               size="sm"
               color="red"
               icon="svguse:icons.svg#trash-fill"
+              @click="fnDelete(props.row)"
             >
               <q-tooltip
                 style="background: rgb(50, 50, 50, 0.5)"
@@ -184,6 +188,26 @@
       </q-tr>
     </template>
   </q-table>
+  <div class="relative-position q-mt-md">
+    <div class="row justify-center">
+      <q-pagination
+        v-model="pagination.page"
+        :max="pagesNumber"
+        direction-links
+        boundary-links
+      />
+    </div>
+    <div class="absolute-right">
+      <q-select
+        v-model="pagination.rowsPerPage"
+        style="width: 100px"
+        filled
+        dense
+        label="RowsPerPage"
+        :options="[5, 10, 15, 20, 25, 30, 40, 50]"
+      />
+    </div>
+  </div>
 </template>
 
 <script>
@@ -193,6 +217,7 @@ import { useQuasar } from 'quasar'
 import notify from '@/api/notify'
 
 import addSchedule from '@/components/dialog/broadcast/addSchedule'
+import dlDelete from '@/components/dialog/delete'
 
 export default {
   setup() {
@@ -200,12 +225,16 @@ export default {
     const { notifyInfo, notifyError } = notify()
     const $q = useQuasar()
 
-    const pagenation = ref({
+    const pagination = ref({
       sortBy: 'desc',
       descending: false,
       page: 1,
       rowsPerPage: 10
     })
+
+    const pagesNumber = computed(() =>
+      Math.ceil(schedules.value.length / pagination.value.rowsPerPage)
+    )
 
     const schedules = computed(() => state.schedules.schedules)
     const user = computed(() => state.user.user)
@@ -234,12 +263,29 @@ export default {
       })
     }
 
+    const fnDelete = (item) => {
+      $q.dialog({
+        component: dlDelete,
+        componentProps: { message: '현재 스케줄을 삭제하시겠습니까?' }
+      }).onOk(async () => {
+        if (item && item._id) {
+          await api.get(
+            `/api/broadcast/schedule/delete?id=${item._id}`
+          )
+        }
+        dispatch('schedules/updateSchedules')
+      })
+    }
+
     return {
+      pagination,
+      pagesNumber,
       schedules,
       user,
       search,
       fnActive,
-      fnEdit
+      fnEdit,
+      fnDelete
     }
   }
 }

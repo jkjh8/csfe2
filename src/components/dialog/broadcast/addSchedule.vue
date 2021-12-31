@@ -29,6 +29,7 @@
                   ? 'svguse:icons.svg#check-circle'
                   : 'svguse:icons.svg#ban'
               "
+              size="sm"
               @click="active = !active"
             >
               <q-tooltip
@@ -38,6 +39,25 @@
                 :offset="[10, 10]"
               >
                 동작상태
+              </q-tooltip>
+            </q-btn>
+
+            <q-btn
+              round
+              flat
+              color="red-10"
+              icon="svguse:icons.svg#trash-fill"
+              size="sm"
+              :disabled="disabled"
+              @click="fnDelete"
+            >
+              <q-tooltip
+                style="background: rgb(50, 50, 50, 0.6)"
+                anchor="top middle"
+                self="center middle"
+                :offset="[10, 10]"
+              >
+                스케줄삭제
               </q-tooltip>
             </q-btn>
           </div>
@@ -285,6 +305,7 @@ import notify from '@/api/notify'
 
 import ZoneSel from '@/components/broadcast/zoneSel'
 import FileSel from '@/components/files/fileSel'
+import dlDelete from '@/components/dialog/delete/'
 import dlZoneSel from '@/components/dialog/broadcast/zoneSel'
 import dlFileSel from '@/components/dialog/files/fileSel'
 import dlTTS from '@/components/dialog/broadcast/ttsCreate'
@@ -328,6 +349,28 @@ export default {
       endChime: false,
       volume: 70
     })
+
+    const disabled = computed(() => {
+      if (current && current._id) {
+        return false
+      } else {
+        return true
+      }
+    })
+
+    const fnDelete = () => {
+      $q.dialog({
+        component: dlDelete,
+        componentProps: { message: '현재 스케줄을 삭제하시겠습니까?' }
+      }).onOk(async () => {
+        if (current && current._id) {
+          await api.get(
+            `/api/broadcast/schedule/delete?id=${current._id}`
+          )
+        }
+        onDialogOK()
+      })
+    }
 
     const fnAddZones = () => {
       $q.dialog({
@@ -378,7 +421,7 @@ export default {
         } else {
           await api.post('/api/broadcast/schedule', current)
         }
-        onDialogOK(current)
+        onDialogOK()
       } catch (e) {
         console.error(e.response)
         notifyError({
@@ -399,9 +442,11 @@ export default {
     return {
       ...toRefs(current),
       parents,
+      disabled,
       fnAddZones,
       fnFileSel,
       fnTTSCreate,
+      fnDelete,
       dialogRef,
       onDialogHide,
       onOKClick,

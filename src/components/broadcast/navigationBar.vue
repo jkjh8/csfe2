@@ -22,6 +22,7 @@
         round
         flat
         icon="svguse:icons.svg#chevron-left"
+        color="grey-8"
         size="sm"
         @click="$emit('prev')"
       >
@@ -38,6 +39,7 @@
         round
         flat
         icon="svguse:icons.svg#chevron-right"
+        color="grey-8"
         size="sm"
         @click="$emit('next')"
       >
