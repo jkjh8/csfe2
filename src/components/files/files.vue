@@ -19,7 +19,7 @@
             />
           </div>
           <div class="name q-ml-sm" style="font-size: 1.2rem">
-            Folder
+            폴더 선택
           </div>
         </div>
         <div class="q-ml-md row items-center q-gutter-x-xs">
@@ -108,7 +108,9 @@
             { name: 'actions', align: 'center', label: 'Actions' }
           ]"
           :rows="files"
-          :pagination="{ rowsPerPage: 0 }"
+          row-key="index"
+          v-model:pagination="pagination"
+          hide-pagination
         >
           <template #body="props">
             <q-tr
@@ -181,6 +183,26 @@
       </div>
     </q-card-section>
   </q-card>
+  <div class="relative-position q-mt-md">
+    <div class="row justify-center">
+      <q-pagination
+        v-model="pagination.page"
+        :max="pagesNumber"
+        direction-links
+        boundary-links
+      />
+    </div>
+    <div class="absolute-right">
+      <q-select
+        v-model="pagination.rowsPerPage"
+        style="width: 100px"
+        filled
+        dense
+        label="RowsPerPage"
+        :options="[5, 10, 15, 20, 25, 30, 40, 50]"
+      />
+    </div>
+  </div>
 </template>
 
 <script>
@@ -202,6 +224,17 @@ export default {
     const user = computed(() => state.user.user)
     const files = ref([])
     const folders = ref(['Media'])
+
+    const pagination = ref({
+      sortBy: 'desc',
+      descending: false,
+      page: 1,
+      rowsPerPage: 10
+    })
+
+    const pagesNumber = computed(() =>
+      Math.ceil(files.value.length / pagination.value.rowsPerPage)
+    )
 
     async function fnMoveFolder(idx) {
       if (idx === 0) {
@@ -290,6 +323,8 @@ export default {
 
     return {
       fileIcons,
+      pagination,
+      pagesNumber,
       user,
       fnPreview,
       fnMoveFolder,

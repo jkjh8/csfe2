@@ -1,9 +1,4 @@
 <template>
-  <div class="row justify-end q-mb-sm">
-    <q-input v-model="search" dense filled label="검색">
-      <template #append> <q-icon name="search" /> </template>
-    </q-input>
-  </div>
   <q-table
     style="border-radius: 0.5rem"
     class="shadow-15"
@@ -238,8 +233,7 @@ export default {
 
     const schedules = computed(() => state.schedules.schedules)
     const user = computed(() => state.user.user)
-
-    const search = ref('')
+    const search = computed(() => state.schedules.search)
 
     const fnActive = async (item) => {
       if (item.user !== user.value.email && !user.value.admin) {
@@ -258,7 +252,7 @@ export default {
       $q.dialog({
         component: addSchedule,
         componentProps: { schedule: item }
-      }).onOk(async (rt) => {
+      }).onOk(async () => {
         dispatch('schedules/updateSchedules')
       })
     }

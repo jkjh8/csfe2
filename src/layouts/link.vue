@@ -47,12 +47,15 @@
       <q-menu
         class="bg-black"
         style="border-radius: 2rem"
-        :offset="[65, 5]"
+        :offset="[125, 5]"
       >
         <div class="q-pa-sm">
-          <router-link class="link" to="/management/files"
-            >파일관리</router-link
-          >
+          <router-link class="link" to="/management/files">
+            파일관리
+          </router-link>
+          <router-link class="link" to="/management/playlist">
+            플레이리스트관리
+          </router-link>
           <router-link class="link" to="/management/eventlog"
             >이벤트로그</router-link
           >

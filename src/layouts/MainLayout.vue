@@ -26,8 +26,8 @@ import { defineComponent, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { socket } from '@/api/socketio'
 
-import Links from '@/components/layout/link'
-import UserState from '@/components/layout/userState'
+import Links from '@/layouts/link'
+import UserState from '@/layouts/userState'
 import Preview from '@/components/dialog/preview'
 
 export default defineComponent({

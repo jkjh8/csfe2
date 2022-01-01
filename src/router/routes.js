@@ -63,6 +63,10 @@ const routes = [
       {
         path: 'eventlog',
         component: () => import('src/pages/management/eventlog.vue')
+      },
+      {
+        path: 'playlist',
+        component: () => import('src/pages/management/playlist.vue')
       }
     ]
   },

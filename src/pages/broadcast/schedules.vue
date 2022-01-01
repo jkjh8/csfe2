@@ -12,6 +12,9 @@
       </div>
 
       <div class="q-gutter-x-sm row no-wrap items-center">
+        <q-input v-model="search" dense filled label="검색">
+          <template #append> <q-icon name="search" /> </template>
+        </q-input>
         <q-btn
           round
           flat
@@ -72,7 +75,7 @@ import addSchedule from '@/components/dialog/broadcast/addSchedule'
 export default {
   components: { Table, Calendar },
   setup() {
-    const { state, getters, dispatch } = useStore()
+    const { state, getters, commit, dispatch } = useStore()
     const $q = useQuasar()
     const { notifyError } = notify()
 
@@ -81,6 +84,15 @@ export default {
     const deviceCount = computed(() => getters['devices/deviceCount'])
     const deviceError = computed(() => getters['devices/error'])
     const activeCount = computed(() => getters['devices/actives'])
+
+    const search = computed({
+      get() {
+        return state.schedules.search
+      },
+      set(v) {
+        return commit('schedules/updateSearch', v)
+      }
+    })
 
     onMounted(async () => {
       $q.loading.show()
@@ -109,6 +121,7 @@ export default {
     return {
       user,
       viewMode,
+      search,
       fnAdd,
       deviceCount,
       deviceError,
