@@ -4,80 +4,71 @@
     style="width: 40%; min-width: 350px; border-radius: 0.5rem"
   >
     <q-card-section class="q-pa-none gradient-blue">
-      <div class="q-pa-md text-white">
+      <div
+        class="q-px-md q-py-sm text-white row no-wrap justify-between"
+      >
         <div class="row items-center">
-          <q-icon name="svguse:icons.svg#device-tablet" size="sm" />
+          <q-icon name="svguse:icons.svg#server-fill" size="sm" />
           <div class="q-ml-sm name" style="font-size: 1rem">
             플레이 리스트
           </div>
+        </div>
+        <div>
+          <q-btn
+            round
+            flat
+            icon="svguse:icons.svg#plus-circle-fill"
+            @click="fnAdd()"
+          >
+            <q-tooltip> 추가 </q-tooltip>
+          </q-btn>
         </div>
       </div>
     </q-card-section>
 
     <q-card-section class="q-pa-none">
       <q-scroll-area style="height: 50vh">
-        <q-list>
+        <q-list v-if="selected">
           <q-item
             class="q-px-lg"
-            v-for="device in childrens"
-            :key="device.index"
+            v-for="(item, index) in selected.list"
+            :key="index"
           >
             <q-item-section avatar>
               <q-avatar size="1.7rem" color="grey-1">
-                {{ device.index }}
-                <q-badge
-                  v-if="!device.status"
-                  color="red"
-                  rounded
-                  floating
+                <q-icon
+                  :name="fileIcons(item.type).icon"
+                  :color="fileIcons(item.type).color"
+                  size="xs"
                 />
               </q-avatar>
             </q-item-section>
             <q-item-section>
               <q-item-label>
-                <span class="name">{{ device.name }}</span>
-                <span
-                  class="q-mx-sm"
-                  :class="
-                    device.devicetype === 'Q-Sys' ? 'qsys' : 'barix'
-                  "
-                  style="font-size: 0.5rem"
-                >
-                  {{ device.devicetype }}
-                </span>
-              </q-item-label>
-              <q-item-label caption>
-                {{ device.parent.name }} channel:
-                {{ device.channel }}
+                <span class="name">{{ item.name }}</span>
               </q-item-label>
             </q-item-section>
 
             <q-item-section side>
               <div>
                 <q-btn
-                  flat
+                  v-if="
+                    item.type === 'audio' || item.type === 'video'
+                  "
                   round
-                  color="green-10"
+                  flat
+                  icon="svguse:icons.svg#play"
                   size="sm"
-                  icon="svguse:icons.svg#pencil-fill"
-                  @click="fnEdit(device)"
-                >
-                  <q-tooltip
-                    style="background: rgba(0, 0, 0, 0.4)"
-                    anchor="top middle"
-                    self="bottom middle"
-                    :offset="[10, 10]"
-                  >
-                    수정
-                  </q-tooltip>
-                </q-btn>
+                  color="green"
+                  @click="fnPreview(item)"
+                />
                 <q-btn
                   flat
                   round
                   color="red-10"
                   size="sm"
                   icon="svguse:icons.svg#trash-fill"
-                  @click="fnDelete(device)"
+                  @click="fnDelete(item, index)"
                 >
                   <q-tooltip
                     style="background: rgba(0, 0, 0, 0.4)"
@@ -102,48 +93,92 @@ import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { api } from '@/boot/axios'
+import notify from '@/api/notify'
 
-import Edit from '@/components/dialog/devices/add'
 import Delete from '@/components/dialog/delete'
+import Add from '@/components/dialog/files/addFileTable'
+
+import fileIcons from '@/api/fileIcons'
 
 export default {
   setup() {
-    const { getters, dispatch } = useStore()
+    const { state, dispatch } = useStore()
     const $q = useQuasar()
-    const childrens = computed(() => getters['devices/childrens'])
+    const { notifyError } = notify()
+    const user = computed(() => state.user.user)
+    const playlist = computed(() => state.playlist.playlist)
+    const selected = computed(() => state.playlist.selected)
 
-    const fnEdit = (item) => {
+    const fnAdd = () => {
+      if (
+        !user.value.admin &&
+        selected.value.user !== user.value.email
+      ) {
+        return notifyError({
+          message: '스케줄을 변경할 권한이 없습니다',
+          caption: '관리자에게 문의 하세요'
+        })
+      }
+
       $q.dialog({
-        component: Edit,
-        componentProps: { item: item }
-      }).onOk(async () => {
-        dispatch('devices/getDevices')
+        component: Add,
+        componentProps: { selection: 'multiple' }
+      }).onOk(async (rt) => {
+        try {
+          $q.loading.show()
+          await api.post('/api/playlist/addListItem', {
+            id: selected.value._id,
+            list: rt
+          })
+          dispatch('playlist/updatePlaylist')
+          $q.loading.hide()
+        } catch (e) {
+          console.error(e)
+          $q.loading.hide()
+        }
       })
     }
 
-    const fnDelete = (item) => {
+    const fnDelete = (item, index) => {
+      if (
+        !user.value.admin &&
+        selected.value.user !== user.value.email
+      ) {
+        return notifyError({
+          message: '스케줄을 변경할 권한이 없습니다',
+          caption: '관리자에게 문의 하세요'
+        })
+      }
+
       $q.dialog({
         component: Delete,
         componentProps: { item: item }
       }).onOk(async (rt) => {
-        $q.loading.show()
         try {
-          await api.get(`/api/devices/delete?id=${rt._id}`)
-          await dispatch('devices/getDevices')
+          $q.loading.show()
+          await api.get(
+            `/api/playlist/removeListItem?id=${selected.value._id}&index=${index}`
+          )
+          await dispatch('playlist/updatePlaylist')
+          $q.loading.hide()
         } catch (e) {
+          $q.loading.hide()
           console.error(e)
-          notifyError({
-            message: '장비를 삭제 할 수 없습니다'
-          })
         }
-        $q.loading.hide()
       })
     }
 
+    const fnPreview = (file) => {
+      dispatch('preview/openPreview', file)
+    }
+
     return {
-      childrens,
-      fnEdit,
-      fnDelete
+      playlist,
+      selected,
+      fileIcons,
+      fnAdd,
+      fnDelete,
+      fnPreview
     }
   }
 }

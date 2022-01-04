@@ -19,12 +19,18 @@
 </template>
 
 <script>
+import { onMounted } from 'vue'
+import { useStore } from 'vuex'
 import Names from '@/components/playlist/names'
 import Lists from '@/components/playlist/lists'
 
 export default {
   components: { Names, Lists },
   setup() {
+    const { dispatch } = useStore()
+    onMounted(() => {
+      dispatch('playlist/updatePlaylist')
+    })
     return {
       //
     }

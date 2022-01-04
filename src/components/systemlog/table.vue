@@ -85,7 +85,11 @@
               {{ props.row.message }}
             </div>
             <q-popup-proxy
-              style="background: rgba(10, 20, 10, 0.8); color: white"
+              style="
+                background: rgba(10, 20, 10, 0.8);
+                color: white;
+                word-break: break-all;
+              "
             >
               <div class="q-pa-md">
                 {{ props.row.message }}

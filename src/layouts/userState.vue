@@ -106,7 +106,7 @@ export default {
     })
 
     async function logout() {
-      await api.get('api/auth/logout')
+      await api.get(`api/auth/logout?user=${user.value.email}`)
       vuecookie.delete('token')
       localStorage.removeItem('refresh')
       commit('user/updateUser', null)

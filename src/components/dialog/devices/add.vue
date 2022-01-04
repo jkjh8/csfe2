@@ -31,178 +31,171 @@
         </div>
       </q-card-section>
 
-      <q-form @submit="onOKClick(device)">
-        <q-card-section>
-          <div class="q-mx-md">
-            <div>
+      <q-card-section>
+        <div class="q-mx-md q-mt-md">
+          <div>
+            <q-input
+              v-model="device.index"
+              dense
+              type="number"
+              filled
+              label="Index"
+              :rules="rules.required"
+              lazy-rules
+            />
+
+            <q-input
+              v-model="device.name"
+              dense
+              filled
+              label="이름"
+              :rules="rules.required"
+              lazy-rules
+            />
+
+            <q-select
+              v-model="device.devicetype"
+              class="q-mb-md"
+              dense
+              filled
+              label="Device Type"
+              :options="['Q-Sys', 'Barix', 'Local']"
+            />
+
+            <q-input
+              v-model="device.ipaddress"
+              :disable="device.devicetype === 'Local'"
+              dense
+              filled
+              label="Ipaddress"
+              :rules="rules.ipaddress"
+              lazy-rules
+            />
+
+            <q-select
+              v-model="device.mode"
+              class="q-mb-sm"
+              dense
+              filled
+              label="Device Mode"
+              :options="['Master', 'Slave']"
+            />
+
+            <q-separator class="q-mb-sm" />
+
+            <div v-if="device.mode === 'Master'">
               <q-input
-                v-model="device.index"
+                v-model="device.channels"
                 dense
+                filled
                 type="number"
-                filled
-                label="Index"
+                label="Device Channels"
                 :rules="rules.required"
                 lazy-rules
               />
+            </div>
 
-              <q-input
-                v-model="device.name"
+            <div v-else>
+              <q-select
+                v-model="device.parent"
                 dense
                 filled
-                label="이름"
+                clearable
+                :options="parents"
+                option-value="_id"
+                emit-value
+                map-options
+                label="Parent"
+                :rules="rules.required"
+                lazy-rules
+              >
+                <!-- seleted -->
+                <template #selected-item="scope">
+                  <q-item v-if="scope.opt.name" dense>
+                    <q-item-section avatar>
+                      <q-icon name="svguse:color.svg#pc" size="xs" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label
+                        >{{ scope.opt.name }} -
+                        {{ scope.opt.ipaddress }}</q-item-label
+                      >
+                    </q-item-section>
+                    <q-item-section side>
+                      <span
+                        :class="
+                          scope.opt.type === 'Q-Sys'
+                            ? 'qsys'
+                            : 'barix'
+                        "
+                      >
+                        {{ scope.opt.type }}
+                      </span>
+                    </q-item-section>
+                  </q-item>
+                </template>
+                <!-- options -->
+                <template #option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section avatar>
+                      <q-icon name="svguse:color.svg#pc" size="xs" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{
+                        scope.opt.name
+                      }}</q-item-label>
+                      <q-item-label caption>
+                        {{ scope.opt.ipaddress }}
+                      </q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                      <span
+                        :class="
+                          scope.opt.type === 'Q-Sys'
+                            ? 'qsys'
+                            : 'barix'
+                        "
+                      >
+                        {{ scope.opt.type }}
+                      </span>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+              <q-input
+                v-model="device.channel"
+                dense
+                filled
+                type="number"
+                label="Channel"
                 :rules="rules.required"
                 lazy-rules
               />
-
-              <q-input
-                v-model="device.ipaddress"
-                disabled
-                dense
-                filled
-                label="Ipaddress"
-                :rules="rules.ipaddress"
-                lazy-rules
-              />
-
-              <q-select
-                v-model="device.devicetype"
-                dense
-                filled
-                label="Device Type"
-                :options="['Q-Sys', 'Barix']"
-              />
-
-              <q-select
-                v-model="device.mode"
-                class="q-mt-md q-mb-sm"
-                dense
-                filled
-                label="Device Mode"
-                :options="['Master', 'Slave']"
-              />
-
-              <q-separator class="q-mb-sm" />
-
-              <div v-if="device.mode === 'Master'">
-                <q-input
-                  v-model="device.channels"
-                  dense
-                  filled
-                  type="number"
-                  label="Device Channels"
-                  :rules="rules.required"
-                  lazy-rules
-                />
-              </div>
-
-              <div v-else>
-                <q-select
-                  v-model="device.parent"
-                  dense
-                  filled
-                  clearable
-                  :options="parents"
-                  option-value="_id"
-                  emit-value
-                  map-options
-                  label="Parent"
-                  :rules="rules.required"
-                  lazy-rules
-                >
-                  <!-- seleted -->
-                  <template #selected-item="scope">
-                    <q-item v-if="scope.opt.name" dense>
-                      <q-item-section avatar>
-                        <q-icon
-                          name="svguse:color.svg#pc"
-                          size="xs"
-                        />
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label
-                          >{{ scope.opt.name }} -
-                          {{ scope.opt.ipaddress }}</q-item-label
-                        >
-                      </q-item-section>
-                      <q-item-section side>
-                        <span
-                          :class="
-                            scope.opt.type === 'Q-Sys'
-                              ? 'qsys'
-                              : 'barix'
-                          "
-                        >
-                          {{ scope.opt.type }}
-                        </span>
-                      </q-item-section>
-                    </q-item>
-                  </template>
-                  <!-- options -->
-                  <template #option="scope">
-                    <q-item v-bind="scope.itemProps">
-                      <q-item-section avatar>
-                        <q-icon
-                          name="svguse:color.svg#pc"
-                          size="xs"
-                        />
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label>{{
-                          scope.opt.name
-                        }}</q-item-label>
-                        <q-item-label caption>
-                          {{ scope.opt.ipaddress }}
-                        </q-item-label>
-                      </q-item-section>
-                      <q-item-section side>
-                        <span
-                          :class="
-                            scope.opt.type === 'Q-Sys'
-                              ? 'qsys'
-                              : 'barix'
-                          "
-                        >
-                          {{ scope.opt.type }}
-                        </span>
-                      </q-item-section>
-                    </q-item>
-                  </template>
-                </q-select>
-                <q-input
-                  v-model="device.channel"
-                  dense
-                  filled
-                  type="number"
-                  label="Channel"
-                  :rules="rules.required"
-                  lazy-rules
-                />
-              </div>
             </div>
           </div>
-        </q-card-section>
+        </div>
+      </q-card-section>
 
-        <!-- buttons example -->
-        <q-card-actions align="right" class="bg-grey-1">
-          <div class="q-mx-sm q-gutter-sm">
-            <q-btn
-              label="취소"
-              style="width: 5rem"
-              rounded
-              unelevated
-              @click="onCancelClick"
-            />
-            <q-btn
-              color="primary"
-              style="width: 5rem"
-              label="확인"
-              unelevated
-              rounded
-              type="submit"
-            />
-          </div>
-        </q-card-actions>
-      </q-form>
+      <!-- buttons example -->
+      <q-card-actions align="right" class="bg-grey-1">
+        <div class="q-mx-sm q-gutter-sm">
+          <q-btn
+            label="취소"
+            style="width: 5rem"
+            rounded
+            unelevated
+            @click="onCancelClick"
+          />
+          <q-btn
+            color="primary"
+            style="width: 5rem"
+            label="확인"
+            unelevated
+            rounded
+            @click="onOKClick(device)"
+          />
+        </div>
+      </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
@@ -212,6 +205,7 @@ import { useQuasar, useDialogPluginComponent } from 'quasar'
 import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { api } from '@/boot/axios'
+import notify from '@/api/notify'
 
 export default {
   props: {
@@ -225,6 +219,7 @@ export default {
       useDialogPluginComponent()
     const $q = useQuasar()
     const { state, getters } = useStore()
+    const { notifyError } = notify()
 
     const devices = computed(() => state.devices.devices)
 
@@ -265,6 +260,14 @@ export default {
     })
 
     async function onOKClick(item) {
+      if (!item.name) {
+        return notifyError({
+          message: '디바이스 이름을 입력해주세요'
+        })
+      }
+      if (item.devicetype !== 'Local' && !item.ipaddress) {
+        return notifyError({ message: '아이피 주소를 입력해주세요' })
+      }
       let r
       $q.loading.show()
       try {

@@ -104,13 +104,42 @@
         <!-- 파일 -->
         <q-td key="file" :props="props" style="max-width: 200px">
           <div
+            v-if="props.row.mode === 'Playlist'"
+            class="q-gutter-x-sm"
             style="
               width: 100%;
               overflow: hidden;
               text-overflow: ellipsis;
             "
           >
-            {{ props.row.file.name }}
+            <span>
+              <q-icon
+                name="svguse:icons.svg#clipboard-list"
+                color="yellow-8"
+              />
+            </span>
+            <span>
+              {{ props.row.playlist.name }}
+              <q-tooltip style="background: rgba(0, 0, 0, 0.5)">
+                {{ props.row.playlist.name }}
+              </q-tooltip>
+            </span>
+          </div>
+          <div
+            v-else
+            class="q-gutter-x-sm"
+            style="
+              width: 100%;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            "
+          >
+            <span>
+              <q-icon name="svguse:icons.svg#file" color="primary" />
+            </span>
+            <span>
+              {{ props.row.file.name }}
+            </span>
             <q-tooltip style="background: rgba(0, 0, 0, 0.5)">
               {{ props.row.file.name }}
             </q-tooltip>
@@ -166,7 +195,7 @@
               round
               flat
               size="sm"
-              color="red"
+              color="red-10"
               icon="svguse:icons.svg#trash-fill"
               @click="fnDelete(props.row)"
             >

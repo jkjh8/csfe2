@@ -212,24 +212,27 @@
               filled
               dense
               label="방송모드"
-              :options="['Media', 'TTS']"
+              :options="['Media', 'TTS', 'Playlist']"
             />
             <div class="q-gutter-y-sm" style="position: relative">
               <FileSel
+                v-if="mode === 'Media' || mode === 'TTS'"
                 class="cursor-pointer"
                 :file="file"
-                @click="
-                  mode === 'Media' ? fnFileSel() : fnTTSCreate()
-                "
+                @click="selMedia(mode)"
+              />
+              <PlaylistSel
+                v-if="mode === 'Playlist'"
+                :playlist="playlist"
+                class="cursor-pointer"
+                @click="selMedia(mode)"
               />
               <q-icon
                 class="right-top cursor-pointer"
                 name="svguse:icons.svg#plus-circle"
                 color="primary"
                 size="sm"
-                @click="
-                  mode === 'Media' ? fnFileSel() : fnTTSCreate()
-                "
+                @click="selMedia(mode)"
               />
             </div>
             <!-- 볼륨 -->
@@ -305,13 +308,15 @@ import notify from '@/api/notify'
 
 import ZoneSel from '@/components/broadcast/zoneSel'
 import FileSel from '@/components/files/fileSel'
+import PlaylistSel from '@/components/playlist/playlistSel'
 import dlDelete from '@/components/dialog/delete/'
 import dlZoneSel from '@/components/dialog/broadcast/zoneSel'
 import dlFileSel from '@/components/dialog/files/fileSel'
 import dlTTS from '@/components/dialog/broadcast/ttsCreate'
+import dlPlaylistSel from '@/components/dialog/playlist/selPlaylist'
 
 export default {
-  components: { ZoneSel, FileSel },
+  components: { ZoneSel, FileSel, PlaylistSel },
   props: {
     schedule: Object
   },
@@ -336,6 +341,7 @@ export default {
       week: null,
       mode: 'Media',
       file: null,
+      playlist: null,
       ttsText: '',
       ttsRate: 200,
       ttsVoice: null,
@@ -399,6 +405,28 @@ export default {
       })
     }
 
+    const fnPlaylistSel = () => {
+      $q.dialog({
+        component: dlPlaylistSel
+      }).onOk((rt) => {
+        current.playlist = rt
+      })
+    }
+
+    const selMedia = (mode) => {
+      switch (mode) {
+        case 'Media':
+          fnFileSel()
+          break
+        case 'TTS':
+          fnTTSCreate()
+          break
+        case 'Playlist':
+          fnPlaylistSel()
+          break
+      }
+    }
+
     const onOKClick = async () => {
       if (!current.name) {
         return notifyError({
@@ -447,6 +475,8 @@ export default {
       fnFileSel,
       fnTTSCreate,
       fnDelete,
+      fnPlaylistSel,
+      selMedia,
       dialogRef,
       onDialogHide,
       onOKClick,

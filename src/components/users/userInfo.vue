@@ -1,10 +1,7 @@
 <template>
   <q-card class="shadow-15" style="width: 25rem; border-radius: 1rem">
-    <q-card-section class="pa-none gradient-red">
-      <div
-        class="q-px-md q-py-xs text-grey-2 name"
-        style="font-size: 1.2rem"
-      >
+    <q-card-section class="q-pa-none gradient-red">
+      <div class="q-pa-md text-grey-2 name" style="font-size: 1.2rem">
         <span>
           <q-icon name="svguse:icons.svg#user"></q-icon>
         </span>

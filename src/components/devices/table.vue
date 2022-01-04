@@ -91,7 +91,7 @@
         </q-td>
 
         <q-td key="ipaddress" :props="props">
-          <div>
+          <div v-if="props.row.ipaddress">
             <a
               :href="`http://${props.row.ipaddress}`"
               target="_blank"
@@ -99,13 +99,20 @@
               {{ props.row.ipaddress }}
             </a>
           </div>
+          <div v-else>No IP Address</div>
         </q-td>
 
         <q-td key="type" :props="props">
           <div v-if="props.row.devicetype === 'Q-Sys'" class="qsys">
             {{ props.row.devicetype }}
           </div>
-          <div v-if="props.row.devicetype === 'Barix'" class="barix">
+          <div
+            v-else-if="props.row.devicetype === 'Barix'"
+            class="barix"
+          >
+            {{ props.row.devicetype }}
+          </div>
+          <div v-else>
             {{ props.row.devicetype }}
           </div>
         </q-td>
@@ -219,7 +226,7 @@ export default {
     const refreshDevice = async (item) => {
       try {
         await api.get(
-          `/api/devices/refresh?ipaddress=${item.ipaddress}&devicetype=${item.devicetype}`
+          `/api/devices/refresh?ipaddress=${item.ipaddress}&devicetype=${item.devicetype}&_id=${item._id}`
         )
         dispatch('devices/getDevices')
       } catch (e) {

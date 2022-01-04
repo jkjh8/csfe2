@@ -1,9 +1,9 @@
 <template>
   <q-form @submit="onRegister">
     <q-card class="shadow-15" style="width: 25rem">
-      <q-card-section class="pa-none gradient-red">
+      <q-card-section class="q-pa-none gradient-red">
         <div
-          class="q-px-md q-py-xs text-grey-2 name"
+          class="q-pa-md q-ml-sm text-grey-2 name"
           style="font-size: 1.2rem"
         >
           <span>

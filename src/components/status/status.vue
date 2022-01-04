@@ -1,10 +1,18 @@
 <template>
-  <q-card class="shadow-15" style="border-radius: 1rem">
-    <q-card-section class="pa-none gradient-green">
-      <div class="row no-wrap justify-between items-center">
+  <q-card class="shadow-15" style="border-radius: 0.5rem">
+    <q-card-section class="q-pa-none gradient-green">
+      <div
+        class="
+          q-px-md q-py-sm
+          row
+          no-wrap
+          justify-between
+          items-center
+        "
+      >
         <div
-          class="q-px-md q-py-xs text-black name"
-          style="font-size: 1.2rem"
+          class="q-ml-sm q-my-xs text-black name"
+          style="font-size: 1rem"
         >
           <span>
             <q-icon name="svguse:icons.svg#server-fill"></q-icon>

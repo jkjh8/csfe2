@@ -11,6 +11,7 @@ import preview from './preview'
 import schedules from './schedules'
 import tts from './tts'
 import page from './page'
+import playlist from './playlist'
 
 let Store
 
@@ -26,7 +27,8 @@ export default store(function (/* { ssrContext } */) {
       preview,
       schedules,
       tts,
-      page
+      page,
+      playlist
     },
 
     // enable strict mode (adds overhead!)

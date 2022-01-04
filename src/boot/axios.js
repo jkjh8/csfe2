@@ -50,8 +50,11 @@ export default boot(({ app, router, store }) => {
       try {
         const original = error.config
         const refreshtoken = LocalStorage.getItem('refresh')
-        if (error.response.status === 401 && original._retry) {
-          if (original.url === 'api/auth/refresh') {
+        if (error.response.status === 401) {
+          if (
+            original.url === 'api/auth/refresh' &&
+            original._retry
+          ) {
             deleteToken()
             return Promise.reject(error)
           }

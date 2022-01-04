@@ -4,12 +4,24 @@
     style="width: 40%; min-width: 350px; border-radius: 0.5rem"
   >
     <q-card-section class="q-pa-none gradient-red">
-      <div class="q-pa-md text-white">
+      <div
+        class="q-px-md q-py-sm text-white row no-wrap justify-between"
+      >
         <div class="row items-center">
           <q-icon name="svguse:icons.svg#server-fill" size="sm" />
           <div class="q-ml-sm name" style="font-size: 1rem">
             플레이 리스트 선택
           </div>
+        </div>
+        <div>
+          <q-btn
+            round
+            flat
+            icon="svguse:icons.svg#plus-circle-fill"
+            @click="fnAdd()"
+          >
+            <q-tooltip> 플레이리스트 생성 </q-tooltip>
+          </q-btn>
         </div>
       </div>
     </q-card-section>
@@ -17,42 +29,32 @@
     <q-card-section class="q-pa-none">
       <q-scroll-area style="height: 50vh">
         <q-list>
+          <div
+            class="q-mt-lg row justify-center"
+            v-if="!playlist.length"
+          >
+            리스트가 없습니다
+          </div>
           <q-item
             class="q-px-lg"
-            v-for="device in parents"
-            :key="device.index"
+            v-for="item in playlist"
+            :key="item.name"
             v-ripple
             clickable
-            :active="device === selected"
+            :active="item === selected"
             active-class="active-link"
-            @click="fnClickItem(device)"
+            @click="fnClickItem(item)"
           >
             <q-item-section avatar>
-              <q-avatar size="1.7rem" color="grey-1">
-                {{ device.index }}
-                <q-badge
-                  v-if="!device.status"
-                  color="red"
-                  rounded
-                  floating
-                />
-              </q-avatar>
+              <q-icon
+                name="svguse:icons.svg#clipboard-list"
+                size="xs"
+                color="primary"
+              />
             </q-item-section>
             <q-item-section>
               <q-item-label>
-                <span class="name">{{ device.name }}</span>
-                <span
-                  class="q-mx-sm"
-                  :class="
-                    device.devicetype === 'Q-Sys' ? 'qsys' : 'barix'
-                  "
-                  style="font-size: 0.5rem"
-                >
-                  {{ device.devicetype }}
-                </span>
-              </q-item-label>
-              <q-item-label caption>
-                {{ device.ipaddress }}
+                <span class="name">{{ item.name }}</span>
               </q-item-label>
             </q-item-section>
 
@@ -61,28 +63,10 @@
                 <q-btn
                   flat
                   round
-                  color="grey-8"
-                  size="sm"
-                  icon="svguse:icons.svg#view-list"
-                  @click.prevent.stop="fnEditChannel(device)"
-                >
-                  <q-tooltip
-                    style="background: rgba(0, 0, 0, 0.4)"
-                    anchor="top middle"
-                    self="bottom middle"
-                    :offset="[10, 10]"
-                  >
-                    채널 수정
-                  </q-tooltip>
-                </q-btn>
-
-                <q-btn
-                  flat
-                  round
                   color="green-10"
                   size="sm"
                   icon="svguse:icons.svg#pencil-fill"
-                  @click.prevent.stop="fnEdit(device)"
+                  @click.prevent.stop="fnAdd(item)"
                 >
                   <q-tooltip
                     style="background: rgba(0, 0, 0, 0.4)"
@@ -99,7 +83,7 @@
                   color="red-10"
                   size="sm"
                   icon="svguse:icons.svg#trash-fill"
-                  @click.prevent.stop="fnDelete(device)"
+                  @click.prevent.stop="fnDelete(item)"
                 >
                   <q-tooltip
                     style="background: rgba(0, 0, 0, 0.4)"
@@ -120,57 +104,87 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { api } from '@/boot/axios'
+import notify from '@/api/notify'
 
-import Channels from '@/components/dialog/devices/channels'
-import Edit from '@/components/dialog/devices/add'
+import Add from '@/components/dialog/playlist/add'
 import Delete from '@/components/dialog/delete'
 
 export default {
   setup() {
-    const { state, getters, commit, dispatch } = useStore()
+    const { state, commit, dispatch } = useStore()
     const $q = useQuasar()
-    const parents = computed(() => getters['devices/parents'])
-    const selected = computed(() => state.devices.selected)
+    const { notifyError } = notify()
+    const user = computed(() => state.user.user)
+    const playlist = computed(() => state.playlist.playlist)
+    const selected = computed(() => state.playlist.selected)
 
     const fnClickItem = (item) => {
       if (selected.value === item) {
-        commit('devices/selected', null)
+        commit('playlist/updateSelected', null)
       } else {
-        commit('devices/selected', item)
+        commit('playlist/updateSelected', item)
       }
     }
 
-    const fnEditChannel = (item) => {
-      $q.dialog({
-        component: Channels,
-        componentProps: { item: item }
-      }).onOk(async () => {
-        dispatch('devices/getDevices')
-      })
-    }
-
-    const fnEdit = (item) => {
-      $q.dialog({
-        component: Edit,
-        componentProps: { item: item }
-      }).onOk(async () => {
-        dispatch('devices/getDevices')
-      })
+    const fnAdd = async (item) => {
+      try {
+        if (item && item._id) {
+          if (user.value.admin || item.user === user.value.email) {
+            $q.dialog({
+              component: Add,
+              componentProps: { item: item }
+            }).onOk(async (rt) => {
+              $q.loading.show()
+              await api.put('/api/playlist', rt)
+              await dispatch('playlist/updatePlaylist')
+              $q.loading.hide()
+            })
+          } else {
+            notifyError({
+              message: '스케줄을 변경할 권한이 없습니다',
+              caption: '관리자에게 문의 하세요'
+            })
+          }
+        } else {
+          $q.dialog({
+            component: Add
+          }).onOk(async (rt) => {
+            $q.loading.show()
+            await api.post('/api/playlist', {
+              name: rt.name,
+              user: user.value.email,
+              list: rt.list
+            })
+            await dispatch('playlist/updatePlaylist')
+            $q.loading.hide()
+          })
+        }
+      } catch (e) {
+        console.error(e)
+        $q.loading.hide()
+      }
     }
 
     const fnDelete = (item) => {
+      if (!user.value.admin && item.user !== user.value.email) {
+        return notifyError({
+          message: '스케줄을 변경할 권한이 없습니다',
+          caption: '관리자에게 문의 하세요'
+        })
+      }
       $q.dialog({
         component: Delete,
         componentProps: { item: item }
       }).onOk(async (rt) => {
+        console.log(rt)
         $q.loading.show()
         try {
-          await api.get(`/api/devices/delete?id=${rt._id}`)
-          await dispatch('devices/getDevices')
+          await api.get(`/api/playlist/delete?id=${rt._id}`)
+          await dispatch('playlist/updatePlaylist')
         } catch (e) {
           console.error(e)
           notifyError({
@@ -182,11 +196,11 @@ export default {
     }
 
     return {
-      parents,
+      user,
+      playlist,
       selected,
       fnClickItem,
-      fnEditChannel,
-      fnEdit,
+      fnAdd,
       fnDelete
     }
   }

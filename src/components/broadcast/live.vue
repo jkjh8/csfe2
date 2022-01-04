@@ -70,7 +70,7 @@
             filled
             dense
             label="방송모드"
-            :options="['Media', 'TTS']"
+            :options="['Media', 'TTS', 'Playlist']"
           />
         </div>
 
@@ -79,16 +79,23 @@
         <!-- 미디어 선택 -->
         <div class="q-gutter-y-sm" style="position: relative">
           <FileSel
+            v-if="mode === 'Media' || mode === 'TTS'"
             class="cursor-pointer"
             :file="file"
-            @click="mode === 'Media' ? fnFileSel() : fnTTSCreate()"
+            @click="selMedia(mode)"
+          />
+          <PlaylistSel
+            v-if="mode === 'Playlist'"
+            :playlist="playlist"
+            class="cursor-pointer"
+            @click="selMedia(mode)"
           />
           <q-icon
             class="right-top cursor-pointer"
             name="svguse:icons.svg#plus-circle"
             color="primary"
             size="sm"
-            @click="mode === 'Media' ? fnFileSel() : fnTTSCreate()"
+            @click="selMedia(mode)"
           >
           </q-icon>
         </div>
@@ -214,13 +221,15 @@ import { hms } from '@/api/time'
 
 import ZoneSel from '@/components/broadcast/zoneSel'
 import FileSel from '@/components/files/fileSel'
+import PlaylistSel from '@/components/playlist/playlistSel'
 import dlZoneSel from '@/components/dialog/broadcast/zoneSel'
 import dlFileSel from '@/components/dialog/files/fileSel'
 import dlTTS from '@/components/dialog/broadcast/ttsCreate'
 import dlPreset from '@/components/dialog/broadcast/pagePreset'
+import dlPlaylistSel from '@/components/dialog/playlist/selPlaylist'
 
 export default {
-  components: { ZoneSel, FileSel },
+  components: { ZoneSel, FileSel, PlaylistSel },
   setup() {
     const $q = useQuasar()
     const { notifyError } = notify()
@@ -238,6 +247,7 @@ export default {
       selected: [],
       mode: 'Media',
       file: null,
+      playlist: null,
       volume: 70,
       startChime: false
     })
@@ -259,7 +269,8 @@ export default {
         (live.selected = []),
         (live.file = null),
         (live.mode = 'Media'),
-        (live.volume = 70)
+        (live.volume = 70),
+        (live.playlist = null)
       live.startChime = false
     }
 
@@ -287,6 +298,14 @@ export default {
         component: dlTTS
       }).onOk(async (rt) => {
         live.file = rt.file
+      })
+    }
+
+    const fnPlaylistSel = () => {
+      $q.dialog({
+        component: dlPlaylistSel
+      }).onOk((rt) => {
+        live.playlist = rt
       })
     }
 
@@ -331,6 +350,20 @@ export default {
       })
     }
 
+    const selMedia = (mode) => {
+      switch (mode) {
+        case 'Media':
+          fnFileSel()
+          break
+        case 'TTS':
+          fnTTSCreate()
+          break
+        case 'Playlist':
+          fnPlaylistSel()
+          break
+      }
+    }
+
     onMounted(() => {
       socket.on('page_message', (msg) => {
         message.value.push(msg)
@@ -372,11 +405,13 @@ export default {
     return {
       message,
       sec,
+      selMedia,
       fnPreset,
       fnReset,
       fnZoneSel,
       fnFileSel,
       fnTTSCreate,
+      fnPlaylistSel,
       fnOnair,
       dlOnAir,
       fnStop,
