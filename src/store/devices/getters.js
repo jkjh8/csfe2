@@ -38,6 +38,7 @@ export function parents(state, getters, rootState, rootGetters) {
                 mode: child.mode,
                 channel: child.channel,
                 ipaddress: child.ipaddress,
+                status: child.status,
                 disabled: disabled
               })
             })
@@ -51,6 +52,7 @@ export function parents(state, getters, rootState, rootGetters) {
               active: device.active,
               mute: device.mute,
               gain: device.gain,
+              status: device.status,
               children: children
             })
           } else {
@@ -67,6 +69,7 @@ export function parents(state, getters, rootState, rootGetters) {
               active: device.active,
               mute: device.mute,
               gain: device.gain,
+              status: device.status,
               disabled: disabled
             })
           }

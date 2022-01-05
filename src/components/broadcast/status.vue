@@ -220,7 +220,22 @@ export default {
     }
 
     const fnVolume = async (device, item) => {
-      $q.loading.show()
+      // 권한 확인
+      try {
+        if (
+          !user.value.auth.includes(item._id) &&
+          !user.value.admin
+        ) {
+          return notifyError({
+            message: '해당 방송구간의 접근 권한이 없습니다',
+            caption: '관리자에게 문의 하세요'
+          })
+        }
+      } catch (e) {
+        console.error(e)
+      }
+
+      // 다이얼로그 표시
       $q.dialog({
         component: Volume,
         componentProps: { device: device, item: item }
@@ -243,6 +258,21 @@ export default {
     }
 
     const fnMute = async (device, item) => {
+      // 권한 확인
+      try {
+        if (
+          !user.value.auth.includes(item._id) &&
+          !user.value.admin
+        ) {
+          return notifyError({
+            message: '해당 방송구간의 접근 권한이 없습니다',
+            caption: '관리자에게 문의 하세요'
+          })
+        }
+      } catch (e) {
+        console.error(e)
+      }
+      // 상태변경
       $q.loading.show()
       try {
         const r = await api.put('/api/devices/volume', {
@@ -291,39 +321,18 @@ export default {
                     child._id
                   )
                   children.push({
-                    _id: child._id,
-                    index: child.index,
-                    name: child.name,
-                    mode: child.mode,
-                    channel: child.channel,
-                    ipaddress: child.ipaddress,
+                    ...child,
                     disabled: disabled
                   })
                 })
                 parents.value.push({
-                  _id: device._id,
-                  index: device.index,
-                  name: device.name,
-                  mode: device.mode,
-                  ipaddress: device.ipaddress,
-                  channels: device.channels,
-                  active: device.active,
-                  mute: device.mute,
-                  gain: device.gain,
+                  ...device,
                   children: children
                 })
               } else {
                 const disabled = !user.value.auth.includes(device._id)
                 parents.value.push({
-                  _id: device._id,
-                  index: device.index,
-                  name: device.name,
-                  mode: device.mode,
-                  ipaddress: device.ipaddress,
-                  channels: device.channels,
-                  active: device.active,
-                  mute: device.mute,
-                  gain: device.gain,
+                  ...device,
                   disabled: disabled
                 })
               }

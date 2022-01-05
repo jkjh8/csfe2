@@ -51,6 +51,7 @@
                   :label="`channel ${index + 1}`"
                   :rules="rules.duplicate"
                   lazy-rules
+                  @update:model-value="updateValue"
                 >
                   <!-- seleted -->
                   <template #selected-item="scope">
@@ -134,6 +135,8 @@ import { ref, computed, onBeforeMount, toRefs } from 'vue'
 import { useStore } from 'vuex'
 import { useDialogPluginComponent, useQuasar } from 'quasar'
 import { api } from '@/boot/axios'
+import notify from '@/api/notify'
+
 import Select from '@/components/dialog/devices/selectChild'
 
 export default {
@@ -145,6 +148,8 @@ export default {
 
   setup(props) {
     const $q = useQuasar()
+    const { notifyError } = notify()
+
     const { item } = toRefs(props)
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
       useDialogPluginComponent()
@@ -188,6 +193,10 @@ export default {
       }
     }
 
+    const updateValue = (v) => {
+      console.log(v)
+    }
+
     const onOKClick = async () => {
       const filterdChannel = channels.value.filter((e) => e != null)
       const r = await api.post('/api/devices/checkChild', {
@@ -195,7 +204,10 @@ export default {
         channels: filterdChannel
       })
       if (r.data) {
-        return (error.value = `타지역에 중복된 채널이 있습니다 - ${r.data}`)
+        return notifyError({
+          message: '타지역에 중복된 채널이 있습니다',
+          caption: `중복된 채널은 ${r.data}`
+        })
       }
 
       await api.put('/api/devices/updateMasterChannel', {
@@ -203,13 +215,11 @@ export default {
         channels: filterdChannel
       })
       for (let i = 0; i < channels.value.length; i++) {
-        if (channels.value[i]) {
-          await api.put('/api/devices/updateChildChannel', {
-            id: channels.value[i],
-            channel: i + 1,
-            parent: item.value._id
-          })
-        }
+        await api.put('/api/devices/updateChildChannel', {
+          id: channels.value[i],
+          channel: i + 1,
+          parent: item.value._id
+        })
       }
       onDialogOK()
     }
@@ -222,6 +232,7 @@ export default {
         ]
       },
       fnSelect,
+      updateValue,
       onOKClick,
       childrens,
       channels,

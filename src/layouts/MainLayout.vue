@@ -23,8 +23,8 @@
 
 <script>
 import { defineComponent, onMounted } from 'vue'
-import { useStore } from 'vuex'
 import { socket } from '@/api/socketio'
+import notify from '@/api/notify'
 
 import Links from '@/layouts/link'
 import UserState from '@/layouts/userState'
@@ -34,11 +34,26 @@ export default defineComponent({
   name: 'MainLayout',
   components: { Links, UserState, Preview },
   setup() {
-    const { dispatch } = useStore()
-
+    const { notifyInfo, notifyWarn } = notify()
     onMounted(() => {
       socket.on('connection', (msg) => {
         console.log('connected', msg)
+      })
+      socket.on('page_start', (args) => {
+        notifyInfo({
+          message: `${args.source}가 방송을 시작했습니다`,
+          caption: `${args.zones
+            .map((e) => e.name)
+            .join(',')} 지역에 방송을 시작했습니다.`
+        })
+      })
+      socket.on('page_end', (args) => {
+        notifyWarn({
+          message: `${args.source}가 방송을 종료했습니다`,
+          caption: `${args.zones
+            .map((e) => e.name)
+            .join(',')} 지역에 방송을 종료했습니다.`
+        })
       })
     })
 

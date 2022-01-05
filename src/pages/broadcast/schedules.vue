@@ -12,7 +12,13 @@
       </div>
 
       <div class="q-gutter-x-sm row no-wrap items-center">
-        <q-input v-model="search" dense filled label="검색">
+        <q-input
+          v-if="viewMode === 'list'"
+          v-model="search"
+          dense
+          filled
+          label="검색"
+        >
           <template #append> <q-icon name="search" /> </template>
         </q-input>
         <q-btn
@@ -109,7 +115,7 @@ export default {
       $q.dialog({
         component: addSchedule,
         componentProps: { schedule: item }
-      }).onOk(async (rt) => {
+      }).onOk(async () => {
         try {
           await dispatch('schedules/updateSchedules')
         } catch (e) {

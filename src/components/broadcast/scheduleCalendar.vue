@@ -14,9 +14,11 @@
         class="shadow-15"
         style="border-radius: 0.5rem"
         v-model="selectedDate"
-        :day-min-height="80"
+        day-height="120"
+        day-min-height="80"
         :locale="locale"
-        :weekdays="[1, 2, 3, 4, 5, 6, 0]"
+        :weekdays="[0, 1, 2, 3, 4, 5, 6]"
+        date-type="rounded"
         animated
         bordered
         month-label-size="xs"
@@ -61,8 +63,8 @@ import {
 } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
-import { api } from '@/boot/axios'
 import pickColor from '@/api/pickColor'
+import notify from '@/api/notify'
 
 import {
   QCalendarMonth,
@@ -80,7 +82,9 @@ export default defineComponent({
   setup() {
     const { state, dispatch } = useStore()
     const $q = useQuasar()
+    const { notifyError } = notify()
 
+    const user = computed(() => state.user.user)
     const calendar = ref(null)
     const locale = ref('ko-KR')
     const selectedDate = ref(today())
@@ -165,6 +169,13 @@ export default defineComponent({
     }
 
     const fnEditSchedule = (event) => {
+      if (event.user !== user.value.email && !user.value.admin) {
+        return notifyError({
+          message: '해당 스케줄에 대한 권한이 없습니다',
+          caption: '관라자에게 문의 하세요.'
+        })
+      }
+
       $q.dialog({
         component: editSchedule,
         componentProps: {

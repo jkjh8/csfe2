@@ -1,5 +1,5 @@
 <template>
-  <div class="row justify-center items-center q-gutter-md">
+  <div class="q-gutter-x-md">
     <button>
       방송
 
@@ -63,7 +63,7 @@
       </q-menu>
     </button>
 
-    <button>
+    <button v-if="user && user.admin">
       관리자
 
       <q-menu

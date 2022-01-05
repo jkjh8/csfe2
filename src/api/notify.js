@@ -21,6 +21,25 @@ export default function nofi() {
     })
   }
 
+  function notifyWarn(message) {
+    return $q.notify({
+      icon: 'svguse:icons.svg#info-circle-fill',
+      message: message.message,
+      caption: message.caption,
+      position: 'top',
+      color: 'orange',
+      actions: [
+        {
+          icon: 'close',
+          round: true,
+          size: 'sm',
+          color: 'white',
+          handler: () => {}
+        }
+      ]
+    })
+  }
+
   function notifyError(message) {
     return $q.notify({
       icon: 'svguse:icons.svg#exclamation',
@@ -40,5 +59,5 @@ export default function nofi() {
       ]
     })
   }
-  return { notifyInfo, notifyError }
+  return { notifyInfo, notifyError, notifyWarn }
 }

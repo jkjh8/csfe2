@@ -249,6 +249,9 @@ export default {
     const { notifyInfo, notifyError } = notify()
     const $q = useQuasar()
 
+    const schedules = computed(() => state.schedules.schedules)
+    const user = computed(() => state.user.user)
+    const search = computed(() => state.schedules.search)
     const pagination = ref({
       sortBy: 'desc',
       descending: false,
@@ -259,10 +262,6 @@ export default {
     const pagesNumber = computed(() =>
       Math.ceil(schedules.value.length / pagination.value.rowsPerPage)
     )
-
-    const schedules = computed(() => state.schedules.schedules)
-    const user = computed(() => state.user.user)
-    const search = computed(() => state.schedules.search)
 
     const fnActive = async (item) => {
       if (item.user !== user.value.email && !user.value.admin) {
@@ -278,6 +277,13 @@ export default {
     }
 
     const fnEdit = async (item) => {
+      if (item.user !== user.value.email && !user.value.admin) {
+        return notifyError({
+          message: '해당 스케줄에 대한 권한이 없습니다',
+          caption: '관라자에게 문의 하세요.'
+        })
+      }
+
       $q.dialog({
         component: addSchedule,
         componentProps: { schedule: item }
@@ -287,6 +293,13 @@ export default {
     }
 
     const fnDelete = (item) => {
+      if (item.user !== user.value.email && !user.value.admin) {
+        return notifyError({
+          message: '해당 스케줄에 대한 권한이 없습니다',
+          caption: '관라자에게 문의 하세요.'
+        })
+      }
+
       $q.dialog({
         component: dlDelete,
         componentProps: { message: '현재 스케줄을 삭제하시겠습니까?' }

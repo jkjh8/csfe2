@@ -70,6 +70,31 @@
             <!-- 이름 -->
             <q-input v-model="name" filled dense label="이름" />
 
+            <q-separator />
+            <q-select
+              v-model="priority"
+              filled
+              dense
+              :options="[
+                { label: '비상방송', value: 1 },
+                { label: '일반방송', value: 3 },
+                { label: '스케줄방송', value: 4 }
+              ]"
+              option-value="value"
+              option-label="label"
+              emit-value
+              map-options
+              label="우선순위"
+            />
+            <q-select
+              v-model="maxtime"
+              filled
+              dense
+              :options="[60, 120, 240, 300]"
+              label="방송시간제한"
+            />
+            <q-separator />
+
             <!-- 색상 -->
             <q-input v-model="color" filled dense label="색상선택">
               <template #append>
@@ -347,6 +372,8 @@ export default {
       ttsVoice: null,
       nodes: [],
       selected: [],
+      priority: 4,
+      maxtime: 300,
       active: true,
       color: user.value.color,
       dateValue: null,

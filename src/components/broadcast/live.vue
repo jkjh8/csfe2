@@ -37,10 +37,30 @@
     <q-card-section class="q-pt-xs">
       <div class="q-px-md q-gutter-y-sm">
         <!-- 이름 -->
-        <div>
-          <q-input v-model="name" dense filled label="이름" />
-        </div>
-
+        <q-input v-model="name" dense filled label="이름" />
+        <q-separator />
+        <q-select
+          v-model="priority"
+          filled
+          dense
+          :options="[
+            { label: '비상방송', value: 1 },
+            { label: '일반방송', value: 3 },
+            { label: '스케줄방송', value: 4 }
+          ]"
+          option-value="value"
+          option-label="label"
+          emit-value
+          map-options
+          label="우선순위"
+        />
+        <q-select
+          v-model="maxtime"
+          filled
+          dense
+          :options="[60, 120, 240, 300]"
+          label="방송시간제한"
+        />
         <q-separator />
 
         <!-- 방송 구간 선책 -->
@@ -171,13 +191,7 @@
 
       <q-card-section>
         <div
-          class="
-            row
-            justify-center
-            items-center
-            q-gutter-x-sm
-            text-white
-          "
+          class="row justify-center items-center q-gutter-x-sm text-white"
           style="font-size: 2rem"
         >
           <span>방송시간:</span>
@@ -243,6 +257,8 @@ export default {
     const pageId = computed(() => state.page.pageId)
     const live = reactive({
       name: '',
+      priority: 3,
+      maxtime: 240,
       nodes: [],
       selected: [],
       mode: 'Media',
@@ -368,6 +384,16 @@ export default {
       socket.on('page_message', (msg) => {
         message.value.push(msg)
       })
+      socket.on('page_end', () => {
+        try {
+          clearInterval(timer.value)
+          sec.value = 1
+          dlOnAir.value = false
+          message.value = []
+        } catch (e) {
+          console.error(e)
+        }
+      })
       socket.on('page_checked', (args) => {
         try {
           const { id, dup } = args
@@ -383,7 +409,14 @@ export default {
             } else {
               dlOnAir.value = true
               timer.value = setInterval(() => {
-                sec.value += 1
+                if (sec.value !== live.maxtime) {
+                  sec.value += 1
+                } else {
+                  clearInterval(timer.value)
+                  sec.value = 1
+                  dlOnAir.value = false
+                  message.value = []
+                }
               }, 1000)
               socket.emit('command', 'onair', {
                 id: pageId.value,
