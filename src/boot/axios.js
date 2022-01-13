@@ -48,9 +48,12 @@ export default boot(({ app, router, store }) => {
     },
     async function (error) {
       try {
+        if (error.response.status === 304) {
+          return Promise.reject(error)
+        }
         const original = error.config
         const refreshtoken = LocalStorage.getItem('refresh')
-        if (error.response.status === 401) {
+        if (error.response.status === 401 && original._retry) {
           if (
             original.url === 'api/auth/refresh' &&
             original._retry

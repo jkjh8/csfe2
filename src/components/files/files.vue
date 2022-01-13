@@ -2,13 +2,7 @@
   <q-card class="shadow-10" style="border-radius: 0.8rem">
     <q-card-section class="q-pa-none gradient-red">
       <div
-        class="
-          q-px-md q-py-sm
-          row
-          justify-between
-          items-center
-          text-white
-        "
+        class="q-px-md q-py-sm row justify-between items-center text-white"
       >
         <div class="q-gutter-sm row items-center">
           <div>
@@ -306,6 +300,9 @@ export default {
       const r = await api.post('/api/files/get', {
         folder: folders.value
       })
+
+      console.log(r)
+
       files.value = r.data.files.sort(function (a, b) {
         if (a.type === 'directory') {
           return -1

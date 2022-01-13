@@ -21,14 +21,7 @@
         style="overflow: hidden; border-radius: 0.2rem 0.2rem 0 0"
       >
         <div
-          class="
-            gradient-red
-            text-white
-            row
-            justify-between
-            items-center
-            q-px-sm
-          "
+          class="gradient-red text-white row justify-between items-center q-px-sm"
         >
           <div
             class="q-pa-md cursor-pointer"
@@ -102,9 +95,9 @@ export default {
     })
 
     const source = computed(() => {
-      return `${defaultPath.value}/${
-        file.value.base
-      }/${encodeURIComponent(file.value.name)}`
+      return `${defaultPath.value}/${encodeURIComponent(
+        file.value.stream
+      )}`
     })
 
     const fnOnEnded = () => {
