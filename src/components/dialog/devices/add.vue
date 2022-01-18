@@ -163,12 +163,22 @@
                 </template>
               </q-select>
               <q-input
+                v-if="device.devicetype !== 'Local'"
+                v-model="device.port"
+                dense
+                filled
+                type="number"
+                label="Port"
+                :rules="rules.NumberInt"
+                lazy-rules
+              />
+              <q-input
                 v-model="device.channel"
                 dense
                 filled
                 type="number"
                 label="Channel"
-                :rules="rules.required"
+                :rules="rules.NumberInt"
                 lazy-rules
               />
             </div>
@@ -231,6 +241,7 @@ export default {
       index: 1,
       name: '',
       ipaddress: '',
+      port: 4444,
       mode: 'Master',
       devicetype: 'Q-Sys',
       parent: null,
@@ -296,7 +307,6 @@ export default {
         }
         $q.loading.hide()
         onDialogOK(item)
-        console.log(r)
       } catch (err) {
         error.value = err.response.data.message
       }
@@ -306,6 +316,10 @@ export default {
     return {
       rules: {
         required: [(value) => !!value || '필수 항목 입니다'],
+        NumberInt: [
+          (value) => !!value || '필수 항목 입니다',
+          (value) => value > 0 || '0 이상의 숫자를 입력하세요.'
+        ],
         ipaddress: [
           (value) => !!value || '이메일을 입력하세요',
           (value) =>

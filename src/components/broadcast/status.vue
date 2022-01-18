@@ -30,7 +30,7 @@
                       v-show="!device.status"
                       rounded
                       floating
-                      color="red"
+                      color="red-10"
                     />
                   </q-avatar>
                 </q-item-section>
@@ -56,7 +56,7 @@
                       round
                       flat
                       size="sm"
-                      color="red"
+                      color="red-10"
                       icon="svguse:icons.svg#ban"
                       @click.prevent.stop="fnCancelAll(device)"
                     />

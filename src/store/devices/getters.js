@@ -85,6 +85,18 @@ export function childrens(state) {
   if (state.devices.length) {
     state.devices.forEach((device) => {
       if (device.mode === 'Slave') {
+        childrens.push(device)
+      }
+    })
+  }
+  return childrens
+}
+
+export function childrenSelected(state) {
+  const childrens = []
+  if (state.devices.length) {
+    state.devices.forEach((device) => {
+      if (device.mode === 'Slave') {
         if (state.selected) {
           if (device.parent._id === state.selected._id) {
             childrens.push(device)

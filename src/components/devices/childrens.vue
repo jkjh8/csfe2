@@ -110,7 +110,9 @@ export default {
   setup() {
     const { getters, dispatch } = useStore()
     const $q = useQuasar()
-    const childrens = computed(() => getters['devices/childrens'])
+    const childrens = computed(
+      () => getters['devices/childrenSelected']
+    )
 
     const fnEdit = (item) => {
       $q.dialog({

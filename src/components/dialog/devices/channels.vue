@@ -174,6 +174,7 @@ export default {
       item.value.children.forEach((child) => {
         channels.value[child.channel - 1] = child._id
       })
+      console.log(channels.value)
     })
 
     const fnCheckLocal = (v) => {
