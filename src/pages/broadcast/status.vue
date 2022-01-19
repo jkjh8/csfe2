@@ -67,6 +67,7 @@ export default {
     onMounted(async () => {
       $q.loading.show()
       try {
+        dispatch('user/login')
         await dispatch('devices/getDevices')
       } catch (e) {
         console.error(e)

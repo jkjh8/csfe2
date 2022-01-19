@@ -298,7 +298,7 @@ export default {
       // $q.loading.show()
       try {
         const r = await api.get(
-          `/api/devices/cancelAll?ipaddress=${device.ipaddress}&type=${device.devicetype}&user=${user.value.email}`
+          `/api/devices/cancel?ipaddress=${device.ipaddress}&type=${device.devicetype}&user=${user.value.email}`
         )
         parsedDevice(r.data)
       } catch (e) {

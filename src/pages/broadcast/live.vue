@@ -37,6 +37,7 @@ export default {
 
     onMounted(() => {
       dispatch('devices/getDevices')
+      dispatch('user/login')
     })
 
     return {
